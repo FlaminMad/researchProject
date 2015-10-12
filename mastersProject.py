@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 """
 Author: Alexander David Leech
-Date:   07/10/2015
-Rev:    0.3
+Date:   12/10/2015
+Rev:    1
 Lang:   Python 2.7
-Deps:   Pyserial, Pymodbus, scipy
+Deps:   Pyserial, Pymodbus, scipy, openpyxl, collections
 """
 
 from pymodbus.client.sync import ModbusSerialClient as ModbusClient            #Import the MODBUS Protocol
@@ -50,7 +50,7 @@ class dataStorage:
     memY = dq([])
     memY1 = dq([])
     #Initial flag to signal data removal
-    startupFlag = 0    
+    startupFlag = 0
 
     def memoryUpdate(self,In):
         if self.memU.__len__() == 0:
@@ -68,9 +68,7 @@ class dataStorage:
             #Remove the startup data
             self.memU.popleft()
             self.memY.popleft()
-            self.memY1.popleft()
-            #Ensure this procedure does not run again
-            self.startupFlag = 1          
+            self.memY1.popleft()        
             
         elif self.memU.__len__() < self.dataPoints:
             #Filling lists up to number set by dataPoints
@@ -128,7 +126,7 @@ class comClient:
 
 #Note controller parameters are listed here
 
-    interval = 5
+    interval = 30
     sp = 50
     
 
@@ -192,7 +190,7 @@ if __name__ == '__main__':
             r = cc.__getData()
         except:
 		print "Modbus Error: Connection Failed"
-		print "Attempting Reconnection..."
+		break
 
 #        Uncomment to enable excel logging
 #        datLog.writeXls(r)
@@ -202,7 +200,9 @@ if __name__ == '__main__':
         ls.solve(ds.memY, ds.memU, ds.memY1)
 
 #       Update Outputs
-        cc.controller(ls.x0[0], ls.x0[1], r)
+#        if ds.startupFlag == 0:        
+#            cc.controller(ls.x0[0], ls.x0[1], r)
+#            ds.startupFlag = 1
 
 #       For controller time keeping            
         time.sleep(cc.interval - (time.time() - startTime))
