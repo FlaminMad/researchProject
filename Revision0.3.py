@@ -42,7 +42,6 @@ class xlsLogging:
         self.ws.cell(row = self.i+2, column = 0).value = (time.time() - self.startTime)
         for x in range(0, 4):
             self.ws.cell(row = self.i+2, column = x+1).value = data.getRegister(x)
-			print data.getRegister(x).rjust(x+1)
 		
         self.wb.save('dataLogging.xlsx')
         self.i += 1        
@@ -76,24 +75,22 @@ class comClient:
 
     def __getData(self):
         self.client.connect()
-		rr = self.client.read_holding_registers(0, 4, unit=0x01)               #REMEMBER: Controller is unit 0x01!!!!!
+        rr = self.client.read_holding_registers(0, 4, unit=0x01)               #REMEMBER: Controller is unit 0x01!!!!!
         self.client.close()
         return rr
 
     def run(self):
         while(True):
             startTime = time.time()
-			try:
-		        self.datLog.writeXls(self.__getData())
-			except:
-				print "Modbus Error: Connection Failed"
-				print "Attempting Reconnection..."
-            
-			time.sleep(self.interval - (time.time() - startTime))
+            try:
+                self.datLog.writeXls(self.__getData())
+            except:
+			print "Modbus Error: Connection Failed"
+			print "Attempting Reconnection..."
+            time.sleep(self.interval - (time.time() - startTime))
         
 
 		
 if __name__ == '__main__':
-	cc = comClient()
-	
+    cc = comClient()
     cc.run()
