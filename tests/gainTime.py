@@ -18,7 +18,6 @@ import openpyxl as xl                                                          #
 # Put the below in a different file.... when I can work out how to import it!!!!
 
 from scipy import optimize as opt
-from collections import deque as dq
 import numpy
 
 class leastSquares:
@@ -39,55 +38,6 @@ class leastSquares:
         self.x0[1] = ans[0][1]
         #for debugging - REMOVE LATER
         print self.x0
-
-
-class dataStorage:
-    
-    #Amount of data points used to generate alpha and beta in least squares
-    dataPoints = 20
-    #Initialise list to be used as 'realtime data storage'  
-    memU = dq([])
-    memY = dq([])
-    memY1 = dq([])
-    #Initial flag to signal data removal
-    startupFlag = 0
-
-    def memoryUpdate(self,In):
-        if self.memU.__len__() == 0:
-            #Value for Yt+1 is not yet know so to avoid issues, set equal to zero            
-            self.memU.append(In.getRegister(0))
-            self.memY1.append(0)            
-            self.memY.append(In.getRegister(3))
-            
-        elif (self.memU.__len__() == 1 and self.startupFlag == 0):
-            #Store new data         
-            self.memU.append(In.getRegister(0))
-            self.memY1.append(self.memY[-1])            
-            self.memY.append(In.getRegister(3))
-            #Remove the startup data
-            self.memU.popleft()
-            self.memY.popleft()
-            self.memY1.popleft()        
-            
-        elif self.memU.__len__() < self.dataPoints:
-            #Filling lists up to number set by dataPoints
-            self.memU.append(In.getRegister(0))
-            self.memY1.append(self.memY[-1])            
-            self.memY.append(In.getRegister(3))
-            
-        else:
-            #store data            
-            self.memU.append(In.getRegister(0))
-            self.memY1.append(self.memY[-1])            
-            self.memY.append(In.getRegister(3))
-            #Keep data lists at length identified
-            self.memU.popleft()
-            self.memY.popleft()
-            self.memY1.popleft()
-            
-# Put the above in a different file.... when I can work out how to import it!!!!
-#-------------------------------------------------------------------------------
-
 
 class xlsLogging:
     
@@ -154,7 +104,7 @@ class comClient:
         self.client.close()
         return rr
 
-    def __writeData(self,op):
+    def writeData(self,op):
         #Set to write data to the controller output (MODBUS address 3)
         self.client.connect()
         w = self.client.write_register(3,op,unit=0x01)
@@ -167,18 +117,17 @@ class comClient:
         print y.getRegister(0)
         print ""
         if ut > 1000:
-            self.__writeData(1000)
+            self.writeData(1000)
         elif ut < 0:
-            self.__writeData(0)
+            self.writeData(0)
         else:
-            self.__writeData(ut)
+            self.writeData(ut)
         
 
 #-------------------------------------------------------------------------------
 		
 if __name__ == '__main__':
     cc = comClient()
-    ds = dataStorage()
     ls = leastSquares()
 #    Uncomment to enable excel logging
 #    datLog = xlsLogging()
