@@ -12,9 +12,6 @@ import time                                                                    #
 from Modbus import comClient                                                   #Import Modbus Comms Class
 from PID import PIDController as controller
 
-
-sp = 200                                                                       #Note: neets to be 10*desired% e.g. 50% = 500
-
 		
 if __name__ == '__main__':
     #Initialise Modbus comms class    
@@ -31,9 +28,7 @@ if __name__ == '__main__':
         r = [199,0,0,356]
         
         #Send data to controller
-        #Replace 'r[0]' with 'r.getRegister(0)' when using real world comms
-        error = r[0] - sp
-        u = ctrl.proportional(error) + ctrl.integral(error) + ctrl.derivitive(error)
+        u = ctrl.runCtrl(r)
         
         #Write output to valve
         #Replace with 'rw.writeData(u)' when using real world comms
