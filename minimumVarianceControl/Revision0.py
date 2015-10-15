@@ -34,7 +34,7 @@ from pymodbus.client.sync import ModbusSerialClient as ModbusClient
 import logging
 logging.basicConfig()
 log = logging.getLogger()
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 
 #                                 #
@@ -45,13 +45,10 @@ client = ModbusClient(**comSettings)
 client.connect()
 
 
-def dataLogging
-
-
 while(True):
     pv = client.read_input_registers(0,1,unit=0x01)
     
-    if pv.getRegister(0) < 500:
+    if pv.getRegister(0) < 100:
         wc = client.write_register(3,1000,unit=0x01)
     else:     
         wc = client.write_register(3,000,unit=0x01)
