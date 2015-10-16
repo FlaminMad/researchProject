@@ -13,8 +13,12 @@ import time                                                                    #
 from Modbus import comClient                                                   #Import Modbus Comms Class
 from PIDController import PIDController as controller
 from xlsLogging import xlsLogging
+
         
 class researchProject:
+    
+    ctrlType = "PID" #Incorperate control type. Perhaps use as a bool so it
+                     #can be modified from a SCADA interface relatively easily?
     
     def __init__(self):
         #Initialise Modbus comms class    
@@ -41,8 +45,11 @@ class researchProject:
             self.xls.writeXls(r)
 
             #Send data to controller
-            u = self.ctrl.runCtrl(r.getRegister(0),r.getRegister(2))
-            
+            try:
+                u = self.ctrl.runCtrl(r.getRegister(0),r.getRegister(2),r.getRegister(3))
+            except:
+                print "Error: Bad data recieved"
+                
             #Write output to valve     
             try:
                 self.rw.writeData(u)        

@@ -3,18 +3,20 @@
 """
 Author: Alexander David Leech
 Date:   14/10/2015
-Rev:    1
+Rev:    2
 Lang:   Python 2.7
 Deps:   None
 Desc:   Contains PID controller class for import
 """
 
+import numpy as np
+
 class PIDController:
      
      #Adjustable Controller Parameters
-     Kp = 1
-     Ki = 102.618
-     Kd = 1
+     Kg = 1.32
+     Ki = 86.812
+     Kd = 13.095
      dT = 5             #Time Interval
      antiWindUp = 0.2   #Anti-Windup (Between 0.05 & 0.25)
 
@@ -24,36 +26,33 @@ class PIDController:
      startupFlag = True    # For smooth transitioning
      
      
-     def runCtrl(self,pv,sp):
+     def runCtrl(self,pv,sp,op):
          #Calculate error at current time
          error = sp - pv
          
          #To help reduce 'bump' in controller changeover
          if self.startupFlag is True:
-             self.__transition(error)
+             self.__transition(error,pv,op)
              self.startupFlag = False
-             print self.startupFlag
          
          #Run main PID algorithm - Comment out P, I, D methods as necessary
-         u = self.__proportional(error) \
-           + self.__integral(error)     \
-#           + self.__derivitive(pv)
-             
+         u = self.Kg*(error + self.__integral(error) + self.__derivitive(pv))
+
          #Enforce Valve Limitations and antiwindup
          if u > self.highLimit:
              self.spErr += (self.antiWindUp * error)
+             print "High Alarm"
              return 1000
+             
          elif u < self.lowLimit:
              self.spErr += (self.antiWindUp * error)
+             print "Low Alarm"
              return 0
+             
          else:
              self.spErr += error
-             print self.spErr
              return u
-     
-     
-     def __proportional(self,err):
-         return (self.Kp * err)
+
 
      def __integral(self,err):
          ui = ((self.spErr *self.dT)/self.Ki)
@@ -66,6 +65,9 @@ class PIDController:
          self.deriv = pv
          return ud
 
-     def __transition(self,err):
-        self.spErr = err        # Accumulated setpoint error
-        self.deriv = err        # Pervious setpoint error
+     def __transition(self,err,pv,u):
+        #Comment out the derivitive function if it does not apply         
+        #PI Control - Calc sp error rounded to 0 d.p
+        self.spErr = np.around(((self.Ki/self.dT)*((u/self.Kg)-err)),0)  
+        #PID Control Only
+        self.deriv = pv
