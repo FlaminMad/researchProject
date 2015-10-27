@@ -46,13 +46,10 @@ client.connect()
 
 
 while(True):
-    pv = client.read_input_registers(0,1,unit=0x01)
-    
-    if pv.getRegister(0) < 100:
-        wc = client.write_register(3,1000,unit=0x01)
-    else:     
-        wc = client.write_register(3,000,unit=0x01)
-    time.sleep(5)
+    wc = client.write_register(3,1000,unit=0x01)   
+    time.sleep(2)
+    wc = client.write_register(3,000,unit=0x01)
+    time.sleep(2)
 
 client.close()
 

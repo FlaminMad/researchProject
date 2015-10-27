@@ -83,6 +83,7 @@ class comClient:
         while(True):
             startTime = time.time()
             self.datLog.writeXls(self.__getData())
+            print "Safe"
             time.sleep(self.interval - (time.time() - startTime))
         
 

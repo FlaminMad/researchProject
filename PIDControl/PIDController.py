@@ -26,7 +26,7 @@ class PIDController:
      startupFlag = True    # For smooth transitioning
      
      
-     def runCtrl(self,pv,sp,op):
+     def runCtrl(self,pv,sp,op,ctrlType):
          #Calculate error at current time
          error = sp - pv
          
@@ -35,9 +35,14 @@ class PIDController:
              self.__transition(error,pv,op)
              self.startupFlag = False
          
-         #Run main PID algorithm - Comment out P, I, D methods as necessary
-         u = self.Kg*(error + self.__integral(error) + self.__derivitive(pv))
-
+         #Run main PID algorithm based on selected type
+         if ctrlType == "PI":
+             u = self.Kg*(error + self.__integral(error))
+         elif ctrlType == "PID":
+             u = self.Kg*(error + self.__integral(error) + self.__derivitive(pv))
+         else:
+             raise ValueError('Invalid Control Type - Options are PI & PID')
+             
          #Enforce Valve Limitations and antiwindup
          if u > self.highLimit:
              self.spErr += (self.antiWindUp * error)
@@ -65,9 +70,17 @@ class PIDController:
          self.deriv = pv
          return ud
 
-     def __transition(self,err,pv,u):
-        #Comment out the derivitive function if it does not apply         
-        #PI Control - Calc sp error rounded to 0 d.p
-        self.spErr = np.around(((self.Ki/self.dT)*((u/self.Kg)-err)),0)  
-        #PID Control Only
+     def __transition(self,err,pv,u):  
+        # Calculate values for deriv and setErr to ensure seamless bump during
+        # controller changover.
         self.deriv = pv
+        
+        #PI Control - Calc sp error rounded to 0 d.p
+        if self.ctrlType == "PI":
+            self.spErr = np.around(((self.Ki/self.dT)*((u/self.Kg)-err)),0)
+            
+        elif self.ctrlType == "PID":
+            self.spErr = np.around((self.Ki/self.dT)*((u/self.Kg)-err-((self.deriv*self.Kd)/self.dT)),0)
+        
+        else:
+            raise ValueError('Invalid Control Type - Options are PI & PID')

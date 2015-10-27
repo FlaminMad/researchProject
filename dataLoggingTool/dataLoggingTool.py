@@ -6,27 +6,25 @@ Date:   14/10/2015
 Rev:    1
 Lang:   Python 2.7
 Deps:   Pyserial, Pymodbus
-Desc:   Main file for PID Controller
+Desc:   Main file for data logging
 """
 
 import time                                                                    #Time based functions
 from Modbus import comClient                                                   #Import Modbus Comms Class
-from PIDController import PIDController as controller
 from xlsLogging import xlsLogging
 
         
-class researchProject:
-    
-    ctrlType = "PID" #Incorperate control type. Perhaps use as a bool so it
-                     #can be modified from a SCADA interface relatively easily?
+class dataLoggingTool:
     
     def __init__(self):
         #Initialise Modbus comms class    
         self.rw = comClient()
-        #Initialise PID Controller
-        self.ctrl = controller()
         #Initialise excel data logging
         self.xls = xlsLogging()
+        #For Time Interval
+        self.Interval = 5      
+        #For 'heart beat' counter
+        self.count = 0
 
     def run(self):
         #Main Method
@@ -44,24 +42,16 @@ class researchProject:
             #Pass data to excel for logging purposes
             self.xls.writeXls(r)
 
-            #Send data to controller
-            try:
-                u = self.ctrl.runCtrl(r.getRegister(0),r.getRegister(2),r.getRegister(3))
-            except:
-                print "Error: Bad data recieved"
-                
-            #Write output to valve     
-            try:
-                self.rw.writeData(u)        
-            except:
-                print "Modbus Error: Write Connection Failed"
-                break            
-                        
-            time.sleep(self.ctrl.dT - (time.time() - startTime))
+            print self.count
+            self.count += 1
+             
+            time.sleep(self.Interval - (time.time() - startTime))
 
 
 def main():
-    rp = researchProject()
+    rp = dataLoggingTool()
     rp.run()
 
 if __name__ == '__main__':main()
+
+#elements of chemical reaction enginerring - foggler
