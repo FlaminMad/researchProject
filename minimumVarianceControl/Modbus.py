@@ -35,10 +35,14 @@ class comClient:
         self.client = ModbusClient(**self.comSettings)
 
     def readData(self):
-        self.client.connect()
-        #REMEMBER: Controller is unit 0x01
-        r = self.client.read_holding_registers(0, 4, unit=0x01)               
-        self.client.close()
+        try:
+            self.client.connect()
+            #REMEMBER: Controller is unit 0x01
+            r = self.client.read_holding_registers(0, 4, unit=0x01)               
+            self.client.close()
+        except:
+            print "Modbus Error: Read Connection Failed"
+                    
         return r
 
     def writeData(self,op):
