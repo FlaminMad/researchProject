@@ -9,13 +9,13 @@ Deps:   Pyserial, Pymodbus
 Desc:   Main file for PID Controller
 """
 
-import time                                                                    #Time based functions
-from Modbus import comClient                                                   #Import Modbus Comms Class
-from RLS import RLS
-from xlsLogging import xlsLogging
-import numpy as np
+import time                                 #Time based functions
+from Modbus import comClient                #Import Modbus Comms Class
+from RLS import RLS                         #Import Recursive Least Squares
+from xlsLogging import xlsLogging           #Import Data Logging Class
+import numpy as np                          #Import numpy for array & matrices
 
-        
+
 class researchProjectOnlineMVC:
 
     def __init__(self):
@@ -32,31 +32,30 @@ class researchProjectOnlineMVC:
         x = np.array([self.X[0,2],self.X[1,2]])
         #Main Method
         print "Running Main Method..."        
-        while(True):        
+        while(True):
             #Controller time loop
             startTime = time.time()
         
-            #Read controller data as r     
-            r = self.rw.readData()        
+            #Read controller data as r
+            r = self.rw.readData()
            
-            #Write data into variables for passing
-            #Update value to Y+1
-            y = np.array([0]) 
+            #Update y value
+            y = np.array([r.getRegister(0)])
             
-            #Call recursive least squares method
+            #Call recursive least squares method using y and x '-1'
             self.rls.solve(x,y)
        
             #Pass data to excel for logging purposes
             self.xls.writeXls(r,self.rls.sysID)
             
             #Update x values
-            x = np.array([r.getRegister(0),r.getRegister(3)])           
+            x = np.array([r.getRegister(0),r.getRegister(3)])  
             
-            #Remove later, for debugging only            
-            print self.rls.sysID          
+            #Remove later, for debugging only
+            print self.rls.sysID
             
-            #Controller time keeping loop            
-            time.sleep(10 - (time.time() - startTime))       
+            #Controller time keeping loop
+            time.sleep(10 - (time.time() - startTime))
        
        
     def initialSetup(self):
@@ -79,6 +78,7 @@ class researchProjectOnlineMVC:
             print "Setup Complete"
        
 def main():
+    print "Starting"
     rp = researchProjectOnlineMVC()
     rp.initialSetup()
     rp.run()
