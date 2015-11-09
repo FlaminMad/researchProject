@@ -9,14 +9,23 @@ Deps:   Pyserial, Pymodbus
 Desc:   Main file for PID Controller
 """
 
-import time                                 #Time based functions
-import numpy as np                          #Import numpy for array & matrices
-
-
-class researchProjectOnlineMVC:
+class MVController:
 
     def __init__(self):
-        print "Do something"
+        print "Controller Initialised"
 
-    def run(self):
-        print "Do something"
+    def run(self,SP,sysID,yt):
+        ut = (SP-(sysID[0]*yt))/sysID[1]
+        print ut
+        
+        #Write Output
+        if ut > 1000:
+            ut = 1000
+             
+        elif ut < 0:
+            ut = 0
+             
+        else:
+            ut = ut      
+        
+        return ut

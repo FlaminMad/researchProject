@@ -14,7 +14,7 @@ from Modbus import comClient                #Import Modbus Comms Class
 from RLS import RLS                         #Import Recursive Least Squares
 from xlsLogging import xlsLogging           #Import Data Logging Class
 import numpy as np                          #Import numpy for array & matrices
-
+from MVController import MVController
 
 class researchProjectOnlineMVC:
 
@@ -23,6 +23,8 @@ class researchProjectOnlineMVC:
         self.rw = comClient()
         #Initialise Recursive Least Squares Object
         self.rls = RLS()
+        #Initialise Controller
+        self.MVC = MVController()
         #Initialise excel data logging
         self.xls = xlsLogging()
 
@@ -54,8 +56,14 @@ class researchProjectOnlineMVC:
             #Remove later, for debugging only
             print self.rls.sysID
             
+            #Call Controller
+            ut = self.MVC.run(r.getRegister(2),(self.rls.sysID),r.getRegister(0))            
+            
+#            self.rw.writeData(ut) 
+
+            
             #Controller time keeping loop
-            time.sleep(40 - (time.time() - startTime))
+            time.sleep(30 - (time.time() - startTime))
        
        
     def initialSetup(self):
@@ -83,4 +91,31 @@ def main():
     rp.initialSetup()
     rp.run()
 
-if __name__ == '__main__':main()    
+if __name__ == '__main__':main()
+
+
+
+
+
+
+
+
+#For implementation in real life scenario
+'''           
+            
+
+            
+            
+            #Write output to valve     
+            try:
+                self.rw.writeData(u)        
+            except:
+                print "Modbus Error: Write Connection Failed"
+                break 
+
+
+            
+                        
+          
+
+'''    
