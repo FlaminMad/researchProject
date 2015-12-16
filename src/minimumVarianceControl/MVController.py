@@ -16,7 +16,6 @@ class MVController:
 
     def run(self,SP,sysID,yt):
         ut = (SP-(sysID[0]*yt))/sysID[1]
-        print ut
         
         #Write Output
         if ut > 1000:
@@ -26,6 +25,6 @@ class MVController:
             ut = 0
              
         else:
-            ut = ut      
+            ut = ut
         
         return ut

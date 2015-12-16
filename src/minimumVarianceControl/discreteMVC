@@ -6,7 +6,8 @@ Date:   14/10/2015
 Rev:    1
 Lang:   Python 2.7
 Deps:   Pyserial, Pymodbus
-Desc:   Main file for PID Controller
+Desc:   Main file for discrete minimum variance controller using online
+        learning with recursive least squares
 """
 
 import time                                 #Time based functions
@@ -16,7 +17,9 @@ from xlsLogging import xlsLogging           #Import Data Logging Class
 import numpy as np                          #Import numpy for array & matrices
 from MVController import MVController
 
-class researchProjectOnlineMVC:
+class discreteMVC:
+
+    sampleTime = 40
 
     def __init__(self):
         #Initialise Modbus comms class    
@@ -59,11 +62,11 @@ class researchProjectOnlineMVC:
             #Call Controller
             ut = self.MVC.run(r.getRegister(2),(self.rls.sysID),r.getRegister(0))            
             
-#            self.rw.writeData(ut) 
+            #Write Ouput to valve (Limits already enforced by MVC method)
+            self.rw.writeData(ut) 
 
-            
             #Controller time keeping loop
-            time.sleep(30 - (time.time() - startTime))
+            time.sleep(self.sampleTime - (time.time() - startTime))
        
        
     def initialSetup(self):
@@ -78,7 +81,7 @@ class researchProjectOnlineMVC:
                 self.X[0,i]   = r.getRegister(0)
                 self.X[1,i]   = r.getRegister(3)
                 self.Y[:,i-1] = self.X[0,i]
-                time.sleep(2)
+                time.sleep(self.sampleTime)
             r = self.rw.readData()
             self.Y[:,2] = r.getRegister(0)
       
@@ -87,35 +90,10 @@ class researchProjectOnlineMVC:
        
 def main():
     print "Starting"
-    rp = researchProjectOnlineMVC()
-    rp.initialSetup()
-    rp.run()
+    dmvc = discreteMVC()
+    print "Please wait, Reading Initial Parameters..."
+    dmvc.initialSetup()
+    print "Done"
+    dmvc.run()
 
 if __name__ == '__main__':main()
-
-
-
-
-
-
-
-
-#For implementation in real life scenario
-'''           
-            
-
-            
-            
-            #Write output to valve     
-            try:
-                self.rw.writeData(u)        
-            except:
-                print "Modbus Error: Write Connection Failed"
-                break 
-
-
-            
-                        
-          
-
-'''    

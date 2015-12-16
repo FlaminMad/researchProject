@@ -53,5 +53,3 @@ def main():
     rp.run()
 
 if __name__ == '__main__':main()
-
-#elements of chemical reaction enginerring - foggler

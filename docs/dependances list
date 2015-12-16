@@ -1,0 +1,14 @@
+# Masters Research Project
+Level Control Research Project Repo
+
+Required:
+pyserial
+pymodbus
+numpy
+
+Recommended:
+openpyxl
+
+Specific Packages Only:
+scipy
+pybrain

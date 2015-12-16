@@ -16,7 +16,9 @@ from xlsLogging import xlsLogging           #Import Data Logging Class
 import numpy as np                          #Import numpy for array & matrices
 
 
-class researchProjectOnlineMVC:
+class liveSystemParamID: 
+
+    sampleTime = 30
 
     def __init__(self):
         #Initialise Modbus comms class    
@@ -55,7 +57,7 @@ class researchProjectOnlineMVC:
             print self.rls.sysID
             
             #Controller time keeping loop
-            time.sleep(40 - (time.time() - startTime))
+            time.sleep(self.sampleTime - (time.time() - startTime))
        
        
     def initialSetup(self):
@@ -70,7 +72,7 @@ class researchProjectOnlineMVC:
                 self.X[0,i]   = r.getRegister(0)
                 self.X[1,i]   = r.getRegister(3)
                 self.Y[:,i-1] = self.X[0,i]
-                time.sleep(2)
+                time.sleep(self.sampleTime)
             r = self.rw.readData()
             self.Y[:,2] = r.getRegister(0)
       
@@ -79,8 +81,10 @@ class researchProjectOnlineMVC:
        
 def main():
     print "Starting"
-    rp = researchProjectOnlineMVC()
-    rp.initialSetup()
-    rp.run()
+    ID = liveSystemParamID()
+    print "Please wait, Reading Initial Parameters..."
+    ID.initialSetup()
+    print "Done"
+    ID.run()
 
 if __name__ == '__main__':main()    

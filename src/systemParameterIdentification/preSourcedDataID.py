@@ -2,48 +2,35 @@
 # -*- coding: utf-8 -*-
 """
 Author: Alexander David Leech
-Date:   14/10/2015
-Rev:    1
+Date:   16/12/2015
+Rev:    2
 Lang:   Python 2.7
-Deps:   Pyserial, Pymodbus
-Desc:   Main file for PID Controller
+Deps:   Numpy, RLS (Internal, see MVC)
+Desc:   System Parameter identification using RLS based on already sourced data
+        Use comma delimted file format in excel and open in a text editor for
+        easy copy and paste data access.
 """
 
-#import time                                                                    #Time based functions
-from Modbus import comClient                                                   #Import Modbus Comms Class
 from RLS import RLS
-#from xlsLogging import xlsLogging
 import numpy as np
 
         
-class researchProjectMVC:
-    
-    ctrlType = "PID" #Incorperate control type. Perhaps use as a bool so it
-                     #can be modified from a SCADA interface relatively easily?
-    
+class preSourcedDataID:
+        
     def __init__(self):
-        #Initialise Modbus comms class    
-        self.rw = comClient()
         #Initialise Recursive Least Squares Object
         self.rls = RLS()
-        #Initialise excel data logging
-#        self.xls = xlsLogging()
 
     def run(self):
-        #Main Method
-        
         self.testData()
-
         self.rls.setup(self.X,np.matrix.transpose(self.Z))
 
         while(True):
-            for i in range(3, 155):
+            for i in range(3, 154):
                 x = self.X[:,i]
                 y = self.Z[:,i]
                 
                 self.rls.solve(x,y)
-                print x
-                print y
                 print self.rls.sysID
             print "Done, SysID is:"
             print self.rls.sysID
@@ -56,44 +43,7 @@ class researchProjectMVC:
         self.X = np.concatenate((Y,U), axis=0)
         
 def main():
-    rp = researchProjectMVC()
-    rp.run()
+    ID = preSourcedDataID()
+    ID.run()
 
 if __name__ == '__main__':main()
-
-
-
-
-
-
-
-
-#For implementation in real life scenario
-'''           
-            #Read controller data as r     
-            try:
-                r = self.rw.readData()        
-            except:
-                print "Modbus Error: Read Connection Failed"
-                break
-
-
-            #Pass data to excel for logging purposes
-            self.xls.writeXls(r)
-            
-            
-            #Write output to valve     
-            try:
-                self.rw.writeData(u)        
-            except:
-                print "Modbus Error: Write Connection Failed"
-                break 
-
-            #Controller time loop
-            startTime = time.time()
-            
-                        
-            
-            time.sleep(self.ctrl.dT - (time.time() - startTime))
-
-'''    

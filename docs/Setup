@@ -1,0 +1,28 @@
+# Masters Research Project
+Level Control Research Project Repo
+
+There are 4 different tools that can be untilised within this project. Each
+has its own setup instructions as described below.
+
+
+# Data Logging Tool
+This tool has been built upon the modbus protocol to allow the logging of data
+at a set interval. Data is stored within an Excel file to make analysis of
+results easier.
+
+Ensure:
+1. The port settings stored within Mobus.py are correct to match your
+   configuration.
+2. The 'dataLogging.xlsx file' is in the path directory. (If it is not, copy 
+   'dataLoggingTemplate.xlsx' from /docs to the destinantion folder and rename)
+3. The headers are correct for your configuration within xlsLogging.py.
+
+The file, dataLoggingTool can then be run. To exit the program, use ctrl+c.
+
+
+# PID Control
+<To Complete>
+
+
+# Minimum Variance Control
+<To Complete>
