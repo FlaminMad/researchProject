@@ -30,7 +30,7 @@ class comClient:
 
     def parseConfig(self):
         try:
-            with open("conneNOFILEction.yaml", "r") as f:       # safely opens the file and gets the text
+            with open("connection.yaml", "r") as f:       # safely opens the file and gets the text
                 config = yaml.load_all(f)                 # parses the data into python
                 self.comSettings = config               # saves config to member variable
                 # print [i for i in config]                 # DEBUG - prints it
