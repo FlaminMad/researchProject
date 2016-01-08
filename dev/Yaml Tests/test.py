@@ -17,3 +17,13 @@ class testYAML:
 
     def readFile(self):       
         print('loading')
+        
+        with open("conf.yaml", "r") as file_descriptor:
+            data = yaml.load(file_descriptor)
+        return data
+    
+    
+if __name__ == "__main__":
+    ty = testYAML()
+    content = ty.readFile()
+    print content

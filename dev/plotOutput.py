@@ -9,6 +9,7 @@ Deps:   numpy, matplotlib, warnings
 """
 
 import numpy as np
+import yaml
 import warnings
 import matplotlib.pyplot as plt
 
@@ -66,3 +67,13 @@ class plotActiveGraph:
         plt.draw()
         # Workaround to avoid the freezing problem
         plt.pause(0.001)
+    
+    def importSettings(self):
+        try:        
+            with open("plotPenConfiguration.yaml", "r") as f:
+                config = yaml.load(f)
+        except IOError:
+            print("Failed to read config file")
+            raise SystemExit()
+            
+        return config
