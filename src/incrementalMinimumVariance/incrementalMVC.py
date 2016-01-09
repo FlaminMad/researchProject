@@ -10,12 +10,17 @@ Desc:   Main file for discrete minimum variance controller using online
         learning with recursive least squares
 """
 
+##############Under Development#################
+
 import time                                 #Time based functions
-from Modbus import comClient                #Import Modbus Comms Class
-from RLS import RLS                         #Import Recursive Least Squares
-from xlsLogging import xlsLogging           #Import Data Logging Class
 import numpy as np                          #Import numpy for array & matrices
-from MVController import MVControllerInc
+from MVControllerInc import MVControllerInc
+
+import sys ; sys.path.insert(0, '../dataLoggingTool')
+import sys ; sys.path.insert(0, '../systemParameterIdentification')
+from RLS import RLS                         #Import Recursive Least Squares
+from Modbus import comClient                #Import Modbus Comms Class
+from xlsLogging6Vars import xlsLogging6Vars #Import Data Logging Class
 
 class discreteMVC:
 
@@ -29,7 +34,7 @@ class discreteMVC:
         #Initialise Controller
         self.MVC = MVControllerInc()
         #Initialise excel data logging
-        self.xls = xlsLogging()
+        self.xls = xlsLogging6Vars()
 
     def run(self):
         #Take already setup algorithm and incorperate

@@ -24,17 +24,19 @@ import matplotlib.pyplot as plt
 class plotActiveGraph:
     
     def __init__(self):
+        self.config = self.importSettings()
         self.xdata = np.array([[]])
         self.startFlag = 0
         self.fig = plt.subplots()
         plt.subplot(1,1,1)
-        plt.ylim(0,1000)
+        plt.ylim(0,int(self.config["y_axis_max"]))
         plt.ion()
         plt.xlabel("Time (s)")
         plt.show()
         warnings.warn("Ensure plt.show(block=True) is at the end of the main file to keep plot window open on program return")
 
-    def dataUpdate(self,x,*plotData):       
+
+    def dataUpdate(self,x,*plotData):
         # Update x axis data array  
         self.xdata = np.append(self.xdata,x)
         
@@ -42,7 +44,6 @@ class plotActiveGraph:
             # Initialise array for number of pens to plot
             self.ydata = np.array([[]]).reshape(len(plotData),0)
             self.ydata = np.append(self.ydata,np.transpose(np.matrix(plotData)),1)
-            self.startFlag = 1
         else:
             # Update y axis data matrix
             self.ydata = np.append(self.ydata,np.transpose(np.matrix(plotData)),1)
@@ -55,25 +56,33 @@ class plotActiveGraph:
         # Update graph
         self.plot()
         
+        
     def plot(self):
         #Adds data ready to write
         try:
             for i in range (0, (len(self.ydata[:,0]))):
-                plt.plot(self.xdata,np.transpose(self.ydata[i,:]),'g-',label='i')
+                plt.plot(self.xdata,np.transpose(self.ydata[i,:]),self.config["pen_" + str(i+1) + "_colour"],label=self.config["pen_" + str(i+1) + "_name"])
+                
         except IndexError:
             print ("Check ALL variables passed are setup in plotPenConf")
         
+        # Sets up the legend
+        if self.startFlag == 0:
+            plt.legend()
+            self.startFlag = 1        
         # Draws the graph to your screen
         plt.draw()
         # Workaround to avoid the freezing problem
         plt.pause(0.001)
     
+    
     def importSettings(self):
+        #Reads plotPenConfiguration file to import colours and labels
         try:        
             with open("plotPenConfiguration.yaml", "r") as f:
                 config = yaml.load(f)
         except IOError:
             print("Failed to read config file")
-            raise SystemExit()
-            
+            raise SystemExit()   
         return config
+        

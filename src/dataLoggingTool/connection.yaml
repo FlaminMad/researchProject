@@ -1,7 +1,0 @@
-method: rtu
-port: COM3
-stopbits: 1
-bytesize: 8
-parity: N
-baudrate: 9600
-timeout: 1

@@ -9,10 +9,14 @@ Deps:   Pyserial, Pymodbus
 Desc:   Main file for PID Controller
 """
 
-import time                                                                    #Time based functions
-from Modbus import comClient                                                   #Import Modbus Comms Class
+import time
 from PIDController import PIDController as controller
-from xlsLogging import xlsLogging
+
+import sys ; sys.path.insert(0, '../dataLoggingTool')
+from Modbus import comClient                #Import Modbus Comms Class
+from xlsLogging4Vars import xlsLogging4Vars
+from plotActiveGraph import plotActiveGraph
+
 
         
 class researchProjectPID:
@@ -26,7 +30,9 @@ class researchProjectPID:
         #Initialise PID Controller
         self.ctrl = controller()
         #Initialise excel data logging
-        self.xls = xlsLogging()
+        self.xls = xlsLogging4Vars()
+        #For graphical plot
+        self.pg = plotActiveGraph()
 
     def run(self):
         #Main Method
@@ -49,7 +55,10 @@ class researchProjectPID:
                 u = self.ctrl.runCtrl(r.getRegister(0),r.getRegister(2),r.getRegister(3),self.ctrlType)
             except:
                 print "Error: Bad data recieved"
-             
+            
+            #Update graphical plot
+            self.pg.dataUpdate((time.time() - self.xls.startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))            
+            
             #Write output to valve     
             try:
                 self.rw.writeData(u)        

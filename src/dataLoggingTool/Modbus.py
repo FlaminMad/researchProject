@@ -17,23 +17,23 @@ import pprint as pp
 
 class comClient:
 
-#    comSettings = { 
-#                    "method"   : 'rtu',
-#                    "port"     : 'COM3',    #COM2 for virtual serial port tests & COM3/4 for online running
-#                    "stopbits" : 1,                
-#                    "bytesize" : 8,                
-#                    "parity"   : 'N',
-#                    "baudrate" : 9600,
-#                    "timeout"  : 1
-#                  }
+    def __init__(self):
+        self.parseConfig()
+        # Configure logging on the client 
+        logging.basicConfig()                            
+        self.log = logging.getLogger()
+        #Change to DEBUG for full information during runtime
+        self.log.setLevel(logging.INFO)				
+        #  Setup and Open the connection			
+        self.client = ModbusClient(**self.comSettings)          
 
 
     def parseConfig(self):
         try:
-            with open("connection.yaml", "r") as f:       # safely opens the file and gets the text
-                config = yaml.load_all(f)                 # parses the data into python
-                self.comSettings = config               # saves config to member variable
-                # print [i for i in config]                 # DEBUG - prints it
+            with open("../../cfg/connection.yaml", "r") as f:       # safely opens the file and gets the text
+                config = yaml.load(f)                               # parses the data into python
+                self.comSettings = config                           # saves config to member variable
+                
         except IOError:
             print('Failed to set config from file. Falling back to default values:')
             self.comSettings = { 
@@ -47,15 +47,6 @@ class comClient:
                   }
             pp.pprint(self.comSettings)
 
-    def __init__(self):
-	self.parseConfig()
-        # Configure logging on the client 
-        logging.basicConfig()                            
-        self.log = logging.getLogger()
-        #Change to DEBUG for full information during runtime
-        self.log.setLevel(logging.INFO)				
-        #  Setup and Open the connection			
-        self.client = ModbusClient(**self.comSettings)          
 
     def readData(self):
         self.client.connect()
@@ -63,6 +54,7 @@ class comClient:
         r = self.client.read_holding_registers(0, 4, unit=0x01)               
         self.client.close()
         return r
+
 
     def writeData(self,op):
         #Set to write data to the controller output (MODBUS HR 3)
