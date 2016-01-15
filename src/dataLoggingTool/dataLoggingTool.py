@@ -20,7 +20,7 @@ class dataLoggingTool:
         #Initialise Modbus comms class    
         self.rw = comClient()
         #Initialise excel data logging
-        self.xls = xlsLogging4Vars()
+#        self.xls = xlsLogging4Vars()
         #For Time Interval
         self.Interval = 5      
         #For 'heart beat' counter
@@ -42,7 +42,7 @@ class dataLoggingTool:
                 break
 
             #Pass data to excel for logging purposes
-            self.xls.writeXls(r)
+#            self.xls.writeXls(r)
             
             #Add data to plot
             self.pg.dataUpdate((time.time() - self.xls.startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))
@@ -56,6 +56,6 @@ class dataLoggingTool:
 def main():
     rp = dataLoggingTool()
     rp.run()
-    rp.pg.plt.show(block=True)
+    rp.pg.end()
 
 if __name__ == '__main__':main()

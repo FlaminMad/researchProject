@@ -11,7 +11,7 @@ import time
 
 comSettings = {    
                 "method"   : 'rtu',
-                "port"     : 'COM3',
+                "port"     : '/dev/ttyUSB1',
                 "stopbits" : 1,                
                 "bytesize" : 8,                
                 "parity"   : 'N',
@@ -34,7 +34,7 @@ from pymodbus.client.sync import ModbusSerialClient as ModbusClient
 import logging
 logging.basicConfig()
 log = logging.getLogger()
-log.setLevel(logging.INFO)
+#log.setLevel(logging.INFO)
 
 
 #                                 #
@@ -46,10 +46,10 @@ client.connect()
 
 
 while(True):
-    wc = client.write_register(3,1000,unit=0x01)   
-    time.sleep(2)
-    wc = client.write_register(3,000,unit=0x01)
-    time.sleep(2)
+    client.write_register(3,1000,unit=0x01)   
+    time.sleep(4)
+    client.write_register(3,0,unit=0x01)
+    time.sleep(4)
 
 client.close()
 

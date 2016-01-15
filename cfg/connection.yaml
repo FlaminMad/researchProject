@@ -1,5 +1,17 @@
+#Comment out platform as necessary
+
+#Windows
+#method: rtu
+#port: COM3
+#stopbits: 1
+#bytesize: 8
+#parity: N
+#baudrate: 9600
+#timeout: 1
+
+#Linux
 method: rtu
-port: COM3
+port: /dev/ttyUSB0
 stopbits: 1
 bytesize: 8
 parity: N
