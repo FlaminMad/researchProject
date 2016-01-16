@@ -1,0 +1,27 @@
+#!/bin/bash 
+# Author: Alexander David Leech
+# Date:   9/1/2016
+# Desc:   Script to start the system parameter identification tool.
+
+clear
+cd ../src/systemParameterIdentification
+echo Enter selection number:
+echo '(1) Pre Sourced Data Tool'
+echo '(2) Live Identification Tool'
+read SELECTION
+
+if [ $SELECTION -eq 1 ]
+then
+    echo Running identification on presourced data
+    python2 preSourcedDataID.py
+    exit 1
+fi
+
+if [ $SELECTION -eq 2 ]
+then
+    echo Running identification on live MODBUS system
+    python2 liveSystemParamID.py
+    exit 1
+fi
+echo Invalid Input
+

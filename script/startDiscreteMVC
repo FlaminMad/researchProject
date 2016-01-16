@@ -1,0 +1,9 @@
+#!/bin/bash 
+# Author: Alexander David Leech
+# Date:   9/1/2016
+# Desc:   Script to start the system parameter identification tool.
+
+clear
+cd ../src/discreteMinimumVariance/
+python2 discreteMVC.py
+exit 1

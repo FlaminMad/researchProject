@@ -1,0 +1,17 @@
+# Setup graphing parameters in this file
+
+# Ensure each pen has both a _name and _color property to avoid exceptions
+# and ensure all pens are configured. Docs on options are avaliable within
+# the matplotlib documentation.
+
+y_axis_max: 1000
+pen_1_name: PV
+pen_1_colour: go-
+pen_2_name: SP
+pen_2_colour: b^-
+pen_3_name: OP
+pen_3_colour: rx-
+pen_4_name: A
+pen_4_colour: kv-
+pen_4_name: B
+pen_4_colour: cv-
