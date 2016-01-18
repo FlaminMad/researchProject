@@ -4,7 +4,7 @@
 # and ensure all pens are configured. Docs on options are avaliable within
 # the matplotlib documentation.
 
-y_axis_max: 1000
+y_axis_max: 100
 pen_1_name: PV
 pen_1_colour: go-
 pen_2_name: SP
