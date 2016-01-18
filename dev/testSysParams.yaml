@@ -1,0 +1,7 @@
+# Setup test system parameters in this file
+
+tankArea: 0.06
+outDiam: 0.025
+noiseMultiplier: 1.0
+hInitial: 0.0
+uInitial: 0.0
