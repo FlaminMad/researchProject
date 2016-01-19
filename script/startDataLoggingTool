@@ -1,9 +1,0 @@
-#!/bin/bash 
-# Author: Alexander David Leech
-# Date:   9/1/2016
-# Desc:   Script to start the data logging tool
-
-clear
-cd ../src/dataLoggingTool
-python2 dataLoggingTool.py
-exit 1

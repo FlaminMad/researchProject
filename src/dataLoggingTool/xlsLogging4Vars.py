@@ -25,23 +25,20 @@ class xlsLogging4Vars:
         self.ws = self.wb.create_sheet(title='Log' + str(len(self.wb.worksheets)+1))
        
         #Setup new sheet headers
-        self.ws.cell(row = 0, column = 0).value = "Date: "
-        self.ws.cell(row = 0, column = 1).value = time.ctime()
-        self.ws.cell(row = 2, column = 0).value = "I" 
+        self.ws.cell(row = 1, column = 1).value = "Date: "
+        self.ws.cell(row = 1, column = 2).value = time.ctime()
+        self.ws.cell(row = 3, column = 1).value = "I" 
         for x in range(0, 4):
-            self.ws.cell(row= 2, column= x+1).value = self.headers[x]
+            self.ws.cell(row= 3, column= x+2).value = self.headers[x]
 		
         #Initialise Iteration Number & EPOCH time
         self.i = 1
-        self.startTime = time.time()
     
     
-    def writeXls(self, data):
-        
-        self.ws.cell(row = self.i+2, column = 0).value = (time.time() - self.startTime)
+    def writeXls(self, data,startTime):        
+        self.ws.cell(row = self.i+3, column = 1).value = (time.time() - startTime)
         for x in range(0, 4):
-            self.ws.cell(row = self.i+2, column = x+1).value = data.getRegister(x)
-		
+            self.ws.cell(row = self.i+3, column = x+2).value = data.getRegister(x)	
         self.wb.save('dataLogging.xlsx')
         self.i += 1        
         return 1
