@@ -4,6 +4,6 @@
 # Desc:   Script to start the system parameter identification tool.
 
 clear
-cd ../src/discreteMinimumVariance/
+cd ../../src/discreteMinimumVariance/
 python2 discreteMVC.py
 exit 1

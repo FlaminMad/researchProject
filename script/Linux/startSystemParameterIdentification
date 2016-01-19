@@ -4,7 +4,7 @@
 # Desc:   Script to start the system parameter identification tool.
 
 clear
-cd ../src/systemParameterIdentification
+cd ../../src/systemParameterIdentification
 echo Enter selection number:
 echo '(1) Pre Sourced Data Tool'
 echo '(2) Live Identification Tool'

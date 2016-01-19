@@ -4,6 +4,6 @@
 # Desc:   Script to start the PID Controller program
 
 clear
-cd ../src/PIDControl
+cd ../../src/PIDControl
 python2 researchProjectPID.py
 exit 1

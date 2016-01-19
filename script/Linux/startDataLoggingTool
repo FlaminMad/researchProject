@@ -4,7 +4,7 @@
 # Desc:   Script to start the data logging tool
 
 clear
-cd ../src/dataLoggingTool
+cd ../../src/dataLoggingTool
 echo 'Simulation Mode? (Y/N)'
 read SIM
 
