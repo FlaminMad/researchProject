@@ -24,9 +24,10 @@ class PIDController:
      lowLimit = 0       # Valve low limit
      highLimit = 1000   # Valve high limit
      startupFlag = True    # For smooth transitioning
+     ctrlType = "PID"
      
      
-     def runCtrl(self,pv,sp,op,ctrlType):
+     def runCtrl(self,pv,sp,op):
          #Calculate error at current time
          error = sp - pv
          
@@ -36,9 +37,9 @@ class PIDController:
              self.startupFlag = False
          
          #Run main PID algorithm based on selected type
-         if ctrlType == "PI":
+         if self.ctrlType == "PI":
              u = self.Kg*(error + self.__integral(error))
-         elif ctrlType == "PID":
+         elif self.ctrlType == "PID":
              u = self.Kg*(error + self.__integral(error) + self.__derivitive(pv))
          else:
              raise ValueError('Invalid Control Type - Options are PI & PID')

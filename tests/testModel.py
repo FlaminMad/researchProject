@@ -18,8 +18,8 @@ import numpy as np
 class testModel:
     
     def __init__(self):
-        self.mdlConf = self.__importSettings("testSysParams.yaml")
-        self.sp = self.__importSettings("sp.yaml")
+        self.mdlConf = self.__importSettings("../../tests/testSysParams.yaml")
+        self.sp = self.__importSettings("../../tests/sp.yaml")
         self.Av = (np.pi*np.square(self.mdlConf['outDiam']))/4
         self.h = self.mdlConf['hInitial']
         self.__updateFlow(self.mdlConf['uInitial'])
@@ -46,14 +46,15 @@ class testModel:
     
     def __updateFlow(self,u):
         self.u = u
-        self.qin = (0.2693*(u*u*u))-(0.0279*(u*u))+(0.0046*u)
+        ux = float(u/100.0)
+        self.qin = (0.2693*(ux*ux*ux))-(0.0279*(ux*ux))+(0.0046*ux)
         if self.qin > 0.01731:
             self.qin = 0.01731
         return
     
     def readModel(self):
         self.__modelSys()
-        self.sp = self.__importSettings("sp.yaml")['sp']
+        self.sp = self.__importSettings("../../tests/sp.yaml")['sp']
         return
 
     def writeModel(self,u):

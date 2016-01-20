@@ -26,7 +26,7 @@ class preSourcedDataID:
         self.rls.setup(self.X,np.matrix.transpose(self.Z))
 
         while(True):
-            for i in range(3, 154):
+            for i in range(3, self.Z.size-1):
                 x = self.X[:,i]
                 y = self.Z[:,i]
                 

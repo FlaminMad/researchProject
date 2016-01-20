@@ -10,67 +10,59 @@ Desc:   Main file for PID Controller
 """
 
 import time
-from PIDController import PIDController as controller
-
 import sys ; sys.path.insert(0, '../dataLoggingTool')
 from Modbus import comClient                #Import Modbus Comms Class
-from xlsLogging4Vars import xlsLogging4Vars
+from xlsLogging import xlsLogging
 from plotActiveGraph import plotActiveGraph
+from PIDController import PIDController as controller
 
+if int(sys.argv[1]) == 1:
+    sys.path.insert(0, '../../tests')    
+    from testModel import testModel               #Import Simulation Class
 
         
 class researchProjectPID:
     
-    ctrlType = "PID" #Incorperate control type. Perhaps use as a bool so it
-                     #can be modified from a SCADA interface relatively easily?
     
     def __init__(self):
-        #Initialise Modbus comms class    
-        self.rw = comClient()
-        #Initialise PID Controller
-        self.ctrl = controller()
-        #Initialise excel data logging
-        self.xls = xlsLogging4Vars()
-        #For graphical plot
-        self.pg = plotActiveGraph()
+        # Objects
+        self.rw = comClient()           #Initialise Modbus comms class 
+        self.xls = xlsLogging(4)        #Initialise excel data logging
+        self.pg = plotActiveGraph()     #Initialise graphical plot
+        self.ctrl = controller()        #Initialise PID Controller
+        self.r = testModel()            #Initialise simulated lab rig
 
-    def run(self):
-        #Main Method
+        # Variables
+        self.count = 0                  #For 'heart beat' counter
+
+    def run(self, sim):
+        startTime = time.time()         #For time reference
+
         while(True):
-            #For controller time loop
-            startTime = time.time()
+            loopTime = time.time()      #Itteration start time
             
-            #Read controller data as r     
-            try:
-                r = self.rw.readData()        
-            except:
-                print "Modbus Error: Read Connection Failed"
-                break
+            if sim:
+                self.r.readModel()      #Read simulation data
+                self.xls.writeXls(startTime, self.r) #Log data in excel
+                self.pg.dataUpdate((time.time() - startTime),self.r.getRegister(0),self.r.getRegister(2),self.r.getRegister(3)) #Add data to plot
+                u = self.ctrl.runCtrl(self.r.getRegister(0),self.r.getRegister(2),self.r.getRegister(3))
+                self.r.writeModel(u)
+                
+            else:
+                r = self.rw.dataHandler('r')  #Read live data
+                self.xls.writeXls(startTime,r)  #Log data in excel
+                self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))    #Add data to plot
+                u = self.ctrl.runCtrl(r.getRegister(0),r.getRegister(2),r.getRegister(3))
+                self.rw.dataHandler('w',u)
 
-            #Pass data to excel for logging purposes
-            self.xls.writeXls(r)
-
-            #Send data to controller
-            try:
-                u = self.ctrl.runCtrl(r.getRegister(0),r.getRegister(2),r.getRegister(3),self.ctrlType)
-            except:
-                print "Error: Bad data recieved"
-            
-            #Update graphical plot
-            self.pg.dataUpdate((time.time() - self.xls.startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))            
-            
-            #Write output to valve     
-            try:
-                self.rw.writeData(u)        
-            except:
-                print "Modbus Error: Write Connection Failed"
-                break            
-                       
-            time.sleep(self.ctrl.dT - (time.time() - startTime))
+            print self.count            #Heartbeat
+            self.count += 1             #Heartbeat
+            time.sleep(self.ctrl.dT - (time.time() - loopTime))
 
 
-def main():
+def main(sim):
     rp = researchProjectPID()
-    rp.run()
-
-if __name__ == '__main__':main()
+    rp.run(sim[1])
+    rp.pg.end()
+    
+if __name__ == '__main__':main(sys.argv)
