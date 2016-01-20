@@ -41,11 +41,7 @@ class dataLoggingTool:
                 self.pg.dataUpdate((time.time() - startTime),self.r.getRegister(0),self.r.getRegister(2),self.r.getRegister(3)) #Add data to plot
                 
             else:
-                try:
-                    r = self.rw.readData()  #Read live controller data as r  
-                except:
-                    print "Modbus Error: Read Connection Failed"
-                    raise SystemExit()
+                r = self.rw.dataHandler('r')  #Read live controller data as r
                 self.xls.writeXls(r,startTime) #Log data in excel
                 self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))    #Add data to plot                
             

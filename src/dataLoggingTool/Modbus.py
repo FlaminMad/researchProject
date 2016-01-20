@@ -11,14 +11,15 @@ Desc:   Class for communications to the honeywell controller using
 """
 
 from pymodbus.client.sync import ModbusSerialClient as ModbusClient            #Import the MODBUS Protocol
-import logging                                                                 #For debugging purposes
+import logging
 import yaml
-import pprint as pp
+import time
+
 
 class comClient:
 
     def __init__(self):
-        self.parseConfig()
+        self.__parseConfig()
         # Configure logging on the client 
         logging.basicConfig()                            
         self.log = logging.getLogger()
@@ -28,7 +29,7 @@ class comClient:
         self.client = ModbusClient(**self.comSettings)          
 
 
-    def parseConfig(self):
+    def __parseConfig(self):
         try:
             with open("../../cfg/connection.yaml", "r") as f:       # safely opens the file and gets the text
                 config = yaml.load(f)                               # parses the data into python
@@ -45,18 +46,43 @@ class comClient:
                     "baudrate" : 9600,
                     "timeout"  : 1
                   }
-            pp.pprint(self.comSettings)
 
 
-    def readData(self):
-        self.client.connect()
-        #REMEMBER: Controller is unit 0x01
-        r = self.client.read_holding_registers(0, 4, unit=0x01)               
-        self.client.close()
-        return r
+    def dataHandler(self, operation, *data):
+        if operation == 'r':
+            for i in range(3):
+                r = self.readData()
+                if r != IOError:
+                    break
+                elif i == 2:
+                    raise SystemExit('Modbus Error: Failed 3 Attemps')
+                time.sleep(5)
+            return r
+        
+        elif operation == 'w':
+            try:            
+                self.writeData(data[0])
+            except IndexError:
+                raise SystemExit('No data passed to write!')
+            return
+            
+        else:
+            raise ValueError('Invalid Operation')
+
+        
+    def __readData(self):
+        try:        
+            self.client.connect()
+            #REMEMBER: Controller is unit 0x01
+            r = self.client.read_holding_registers(0, 4, unit=0x01)               
+            self.client.close()
+            return r
+        except:
+            print "Modbus Error: Read Connection Failed"
+            return IOError
 
 
-    def writeData(self,op):
+    def __writeData(self,op):
         #Set to write data to the controller output (MODBUS HR 3)
         self.client.connect()
         w = self.client.write_register(3,op,unit=0x01)

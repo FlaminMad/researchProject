@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 class plotActiveGraph:
     
     def __init__(self):
-        self.config = self.importSettings()
+        self.config = self._importSettings()
         self.xdata = np.array([[]])
         self.startFlag = 0
         self.fig = plt.subplots()
@@ -33,7 +33,7 @@ class plotActiveGraph:
         plt.ion()
         plt.xlabel("Time (s)")
         plt.show()
-        warnings.warn("Ensure plt.show(block=True) is at the end of the main file to keep plot window open on program return")
+        warnings.warn("Ensure end fuction is the last method called to keep plot window open on program return")
 
 
     def dataUpdate(self,x,*plotData):
@@ -54,10 +54,10 @@ class plotActiveGraph:
             self.ydata = np.delete(self.ydata,0,1)
         
         # Update graph
-        self.plot()
+        self._plot()
         
         
-    def plot(self):
+    def _plot(self):
         #Adds data ready to write
         try:
             for i in range (0, (len(self.ydata[:,0]))):
@@ -76,7 +76,7 @@ class plotActiveGraph:
         plt.pause(0.001)
     
     
-    def importSettings(self):
+    def _importSettings(self):
         #Reads plotPenConfiguration file to import colours and labels
         try:        
             with open("plotPenConfiguration.yaml", "r") as f:
