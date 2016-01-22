@@ -19,7 +19,7 @@ class testModel:
     
     def __init__(self):
         self.mdlConf = self.__importSettings("../../tests/testSysParams.yaml")
-        self.sp = self.__importSettings("../../tests/sp.yaml")
+        self.sp = self.__importSettings("../../tests/sp.yaml")['sp']
         self.Av = (np.pi*np.square(self.mdlConf['outDiam']))/4
         self.h = self.mdlConf['hInitial']
         self.__updateFlow(self.mdlConf['uInitial'])

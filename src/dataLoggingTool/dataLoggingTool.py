@@ -31,30 +31,29 @@ class dataLoggingTool:
         self.count = 0                  #For 'heart beat' counter
         
 
-    def run(self, sim):
+    def run(self):
         startTime = time.time()         #For time reference
 
         while(True):
-            loopTime = time.time()      #Itteration start time
+            loopTime = time.time()          #Itteration start time
+            r = self.dataPipe()             #Read live controller data as r
+            self.xls.writeXls(startTime,r)  #Log data in excel
+            self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))    #Add data to plot                
             
-            if sim:
-                self.r.readModel()      #Read simulation data
-                self.xls.writeXls(startTime, self.r) #Log data in excel
-                self.pg.dataUpdate((time.time() - startTime),self.r.getRegister(0),self.r.getRegister(2),self.r.getRegister(3)) #Add data to plot
-                
-            else:
-                r = self.rw.dataHandler('r')  #Read live controller data as r
-                self.xls.writeXls(startTime,r) #Log data in excel
-                self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))    #Add data to plot                
-            
-            print self.count            #Heartbeat
-            self.count += 1             #Heartbeat
+            print self.count                #Heartbeat
+            self.count += 1                 #Heartbeat
             time.sleep(self.Interval - (time.time() - loopTime))   #Loop Interval
 
+    def dataPipe(self):
+        if int(sys.argv[1]) == 1:
+            return self.r
+        else:
+            return self.rw.dataHandler('r')
 
-def main(sim):
+
+def main():
     rp = dataLoggingTool()
-    rp.run(sim[1])
+    rp.run()
     rp.pg.end()
 
-if __name__ == '__main__':main(sys.argv)
+if __name__ == '__main__':main()

@@ -61,7 +61,7 @@ class comClient:
         
         elif operation == 'w':
             try:            
-                self.writeData(data[0])
+                self.__writeData(data[0])
             except IndexError:
                 raise SystemExit('No data passed to write!')
             return

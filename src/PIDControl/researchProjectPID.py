@@ -30,39 +30,40 @@ class researchProjectPID:
         self.xls = xlsLogging(4)        #Initialise excel data logging
         self.pg = plotActiveGraph()     #Initialise graphical plot
         self.ctrl = controller()        #Initialise PID Controller
-        self.r = testModel()            #Initialise simulated lab rig
+        if int(sys.argv[1]) == 1:
+            self.r = testModel()        #Initialise simulated lab rig
 
         # Variables
         self.count = 0                  #For 'heart beat' counter
 
-    def run(self, sim):
+    def run(self):
         startTime = time.time()         #For time reference
 
         while(True):
             loopTime = time.time()      #Itteration start time
+            r = self.readDataPipe()                 #Read data
+            self.xls.writeXls(startTime,r)      #Log data in excel
+            self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))    #Add data to plot
+            u = self.ctrl.runCtrl(r.getRegister(0),r.getRegister(2),r.getRegister(3))       #Run the controller
             
-            if sim:
-                self.r.readModel()      #Read simulation data
-                self.xls.writeXls(startTime, self.r) #Log data in excel
-                self.pg.dataUpdate((time.time() - startTime),self.r.getRegister(0),self.r.getRegister(2),self.r.getRegister(3)) #Add data to plot
-                u = self.ctrl.runCtrl(self.r.getRegister(0),self.r.getRegister(2),self.r.getRegister(3))
-                self.r.writeModel(u)
-                
+            if int(sys.argv[1]) == 1:
+                self.r.writeModel(u)            #Write to model
             else:
-                r = self.rw.dataHandler('r')  #Read live data
-                self.xls.writeXls(startTime,r)  #Log data in excel
-                self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))    #Add data to plot
-                u = self.ctrl.runCtrl(r.getRegister(0),r.getRegister(2),r.getRegister(3))
-                self.rw.dataHandler('w',u)
+                self.rw.dataHandler('w',u)      #Write to MODBUS system
 
-            print self.count            #Heartbeat
-            self.count += 1             #Heartbeat
+            print self.count                    #Heartbeat
+            self.count += 1                     #Heartbeat
             time.sleep(self.ctrl.dT - (time.time() - loopTime))
+    
+    def readDataPipe(self):
+        if int(sys.argv[1]) == 1:
+            return self.r
+        else:
+            return self.rw.dataHandler('r') 
 
-
-def main(sim):
+def main():
     rp = researchProjectPID()
-    rp.run(sim[1])
+    rp.run()
     rp.pg.end()
     
-if __name__ == '__main__':main(sys.argv)
+if __name__ == '__main__':main()

@@ -56,11 +56,10 @@ class xlsLogging:
                 self.ws.cell(row= 2+self.osFactor, column= x+1+self.osFactor).value = self.headers[x]
         else:
             warnings.warn("Invaid number of variables - Logging Disabled")
-            self.wb.save('dataLogging.xlsx')
             self.varNo = -1
-               
-        #Initialise Iteration Number
-        self.i = 1
+        
+        self.wb.save('dataLogging.xlsx')    #Save setup file
+        self.i = 1                          #Initialise Iteration Number
     
     
     def writeXls(self, startTime, data, *params):
@@ -73,7 +72,6 @@ class xlsLogging:
         :type *params: list or array
         """        
         if self.varNo == -1: return             #Pass if invalid no of vars
-            
         self.ws.cell(row = self.i+2+self.osFactor, column = self.osFactor).value = (time.time() - startTime)
         for x in range(0, 4):
             self.ws.cell(row = self.i+2+self.osFactor, column = x+1+self.osFactor).value = data.getRegister(x)
