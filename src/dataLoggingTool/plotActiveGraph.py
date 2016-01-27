@@ -1,3 +1,5 @@
+
+
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
@@ -10,7 +12,6 @@ Deps:   numpy, matplotlib, warnings
 
 import numpy as np
 import yaml
-import warnings
 import matplotlib.pyplot as plt
 
 # Example Usage:
@@ -24,16 +25,26 @@ import matplotlib.pyplot as plt
 class plotActiveGraph:
     
     def __init__(self):
-        self.config = self._importSettings()
+        self.config= self._importSettings()
         self.xdata = np.array([[]])
         self.startFlag = 0
         self.fig = plt.subplots()
-        plt.subplot(1,1,1)
-        plt.ylim(0,int(self.config["y_axis_max"]))
+        
+        if self.config["no_of_plots"] == 1:
+            self.ax1 = plt.subplot(1,1,1)
+        elif self.config["no_of_plots"] == 2:
+            self.ax1 = plt.subplot(2,1,1)
+            self.ax2 = plt.subplot(2,1,2)
+            self.ax2.set_xlabel('Time (s)')
+        else:
+            raise SystemExit("Invalid number of plots")
+        
+        self.ax1.set_xlabel('Time (s)')
+        self.ax1.set_ylim(self.config['y_axis_min'],self.config['y_axis_max'])
+        
         plt.ion()
-        plt.xlabel("Time (s)")
         plt.show()
-        warnings.warn("Ensure end fuction is the last method called to keep plot window open on program return")
+        #"Ensure end fuction is the last method called to keep plot window open on program return"
 
 
     def dataUpdate(self,x,*plotData):
@@ -60,9 +71,15 @@ class plotActiveGraph:
     def _plot(self):
         #Adds data ready to write
         try:
-            for i in range (0, (len(self.ydata[:,0]))):
-                plt.plot(self.xdata,np.transpose(self.ydata[i,:]),self.config["pen_" + str(i+1) + "_colour"],label=self.config["pen_" + str(i+1) + "_name"])
-                
+            if self.config["no_of_plots"] == 1:
+                for i in range (0, (len(self.ydata[:,0]))):
+                    self.ax1.plot(self.xdata,np.transpose(self.ydata[i,:]),self.config["pen_" + str(i+1) + "_colour"],label=self.config["pen_" + str(i+1) + "_name"])
+            else:            
+                for i in range (0, 3):
+                    self.ax1.plot(self.xdata,np.transpose(self.ydata[i,:]),self.config["pen_" + str(i+1) + "_colour"],label=self.config["pen_" + str(i+1) + "_name"])
+                for i in range (3, (len(self.ydata[:,0]))):
+                    self.ax2.plot(self.xdata,np.transpose(self.ydata[i,:]),self.config["pen_" + str(i+1) + "_colour"],label=self.config["pen_" + str(i+1) + "_name"])
+                    
         except IndexError:
             print ("Check ALL variables passed are setup in plotPenConf")
         

@@ -4,6 +4,8 @@
 # and ensure all pens are configured. Docs on options are avaliable within
 # the matplotlib documentation.
 
+no_of_plots: 1
+y_axis_min: 0
 y_axis_max: 100
 pen_1_name: PV
 pen_1_colour: go-
@@ -11,5 +13,3 @@ pen_2_name: SP
 pen_2_colour: b^-
 pen_3_name: OP
 pen_3_colour: rx-
-pen_4_name: 
-pen_4_colour: kv-

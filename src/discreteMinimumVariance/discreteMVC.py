@@ -18,28 +18,31 @@ import sys ; sys.path.insert(0, '../dataLoggingTool')
 import sys ; sys.path.insert(0, '../systemParameterIdentification')
 from RLS import RLS                         #Import Recursive Least Squares
 from Modbus import comClient                #Import Modbus Comms Class
-from xlsLogging6Vars import xlsLogging6Vars #Import Data Logging Class
+from xlsLogging import xlsLogging           #Import Data Logging Class
 from plotActiveGraph import plotActiveGraph
 
+if int(sys.argv[1]) == 1:
+    sys.path.insert(0, '../../tests')    
+    from testModel import testModel         #Import Simulation Class
 
 class discreteMVC:
 
     sampleTime = 40
 
     def __init__(self):
-        #Initialise Modbus comms class    
-        self.rw = comClient()
-        #Initialise Recursive Least Squares Object
-        self.rls = RLS()
-        #Initialise Controller
-        self.MVC = MVController()
-        #Initialise excel data logging
-        self.xls = xlsLogging6Vars()
-        #For graphical plot (PV,SP,OP)
-        self.pgA = plotActiveGraph()
-        #For graphical plot (A,B)
-        self.pgB = plotActiveGraph()
-        
+        # Objects
+        self.rw = comClient()           #Initialise Modbus comms class 
+        self.xls = xlsLogging(6)        #Initialise excel data logging
+        self.pg = plotActiveGraph()     #For graphical plot (PV,SP,OP)
+        self.rls = RLS()                #Initialise Recursive Least Squares Object
+        self.MVC = MVController()       #Initialise Controller        
+        if int(sys.argv[1]) == 1:
+            self.r = testModel()        #Initialise simulated lab rig
+
+        # Variables
+        self.count = 0                  #For 'heart beat' counter
+        self.sampleTime = 30            #Controller loop time       
+       
         
     def run(self):
         #Take already setup algorithm and incorperate

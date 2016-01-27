@@ -1,9 +1,0 @@
-#!/bin/bash 
-# Author: Alexander David Leech
-# Date:   9/1/2016
-# Desc:   Script to start the PID Controller program
-
-clear
-cd ../../src/PIDControl
-python2 researchProjectPID.py
-exit 1
