@@ -9,6 +9,8 @@ Deps:   Pyserial, Pymodbus
 Desc:   Main file for PID Controller
 """
 
+import sys
+
 class MVController:
 
     def __init__(self):
@@ -17,9 +19,14 @@ class MVController:
     def run(self,SP,sysID,yt):
         ut = (SP-(sysID[0]*yt))/sysID[1]
         
+        if int(sys.argv[1]) == 1:
+            lim = 100
+        else:
+            lim = 1000
+        
         #Write Output
-        if ut > 1000:
-            ut = 1000
+        if ut > lim:
+            ut = lim
              
         elif ut < 0:
             ut = 0

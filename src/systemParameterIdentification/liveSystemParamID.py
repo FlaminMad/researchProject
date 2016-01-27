@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 """
 Author: Alexander David Leech
-Date:   14/10/2015
-Rev:    1
+Date:   21/01/2016
+Rev:    2
 Lang:   Python 2.7
 Deps:   Pyserial, Pymodbus
-Desc:   Main file for PID Controller
+Desc:   System Parameter identification using RLS based on MODBUS data comms
 """
 
 import time                                 #Time based functions
@@ -29,7 +29,7 @@ class liveSystemParamID:
         # Objects
         self.rw = comClient()           #Initialise Modbus comms class 
         self.xls = xlsLogging(6)        #Initialise excel data logging
-        self.pgA = plotActiveGraph()    #For graphical plot (PV,SP,OP)
+        self.pg = plotActiveGraph()    #For graphical plot (PV,SP,OP)
         self.rls = RLS()                #Initialise Recursive Least Squares Object
         if int(sys.argv[1]) == 1:
             self.r = testModel()        #Initialise simulated lab rig
@@ -49,9 +49,10 @@ class liveSystemParamID:
             r = self.dataPipe()                 #Read controller data as r
             y = np.array([r.getRegister(0)])    #Update y value
             self.rls.solve(x,y)                 #Call recursive least squares method using y and x '-1'
+            x = np.array([r.getRegister(0),r.getRegister(3)])   #Update x values            
             self.xls.writeXls(startTime,r,self.rls.sysID) #Pass data to excel for logging purposes
-            self.pgA.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3),self.rls.sysID[0],self.rls.sysID[1])
-            x = np.array([r.getRegister(0),r.getRegister(3)])   #Update x values
+            self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3),self.rls.sysID[0],self.rls.sysID[1])
+
            
             print self.count            #Heartbeat
             self.count += 1             #Heartbeat
@@ -83,7 +84,6 @@ class liveSystemParamID:
         else:
             return self.rw.dataHandler('r')
        
-       
 def main():
     print "Starting"
     ID = liveSystemParamID()
@@ -91,6 +91,6 @@ def main():
     ID.initialSetup()
     print "Running Main Method..."
     ID.run()
-    ID.pgA.end()
+    ID.pg.end()
 
 if __name__ == '__main__':main()    

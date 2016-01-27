@@ -25,9 +25,8 @@ if int(sys.argv[1]) == 1:
     sys.path.insert(0, '../../tests')    
     from testModel import testModel         #Import Simulation Class
 
-class discreteMVC:
 
-    sampleTime = 40
+class discreteMVC:
 
     def __init__(self):
         # Objects
@@ -41,76 +40,69 @@ class discreteMVC:
 
         # Variables
         self.count = 0                  #For 'heart beat' counter
-        self.sampleTime = 30            #Controller loop time       
-       
+        self.sampleTime = 40            #Controller loop time       
+        
         
     def run(self):
-        #Take already setup algorithm and incorperate
-        y = self.Y[:,2]
-        x = np.array([self.X[0,2],self.X[1,2]])
-        #Main Method
-        print "Running Main Method..."        
-        while(True):
-            #Controller time loop
-            startTime = time.time()
-        
-            #Read controller data as r
-            r = self.rw.readData()
-           
-            #Update y value
-            y = np.array([r.getRegister(0)])
-            
-            #Call recursive least squares method using y and x '-1'
-            self.rls.solve(x,y)
+        startTime = time.time()         #For time reference    
+        y = self.Y[:,2]                 #Transition setup values into the main loop
+        x = np.array([self.X[0,2],self.X[1,2]]) 
        
-            #Pass data to excel for logging purposes
-            self.xls.writeXls(r,self.rls.sysID)
+        while(True):
+            loopTime = time.time()              #Itteration start time
             
-            #Update x values
-            x = np.array([r.getRegister(0),r.getRegister(3)])  
+            r = self.dataPipe()                 #Read controller data as r
+            y = np.array([r.getRegister(0)])    #Update y value
+            self.rls.solve(x,y)                 #Call recursive least squares method using y and x '-1'
+            x = np.array([r.getRegister(0),r.getRegister(3)])   #Update x values            
+            self.xls.writeXls(startTime,r,self.rls.sysID) #Pass data to excel for logging purposes
+            self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3),self.rls.sysID[0],self.rls.sysID[1])
+            u = self.MVC.run(r.getRegister(2),(self.rls.sysID),r.getRegister(0))
             
-            #Remove later, for debugging only
-            print self.rls.sysID
+            if int(sys.argv[1]) == 1:
+                self.r.writeModel(u)            #Write to model
+            else:
+                self.rw.dataHandler('w',u)      #Write to MODBUS system            
             
-            #Update graphical plot
-            self.pgA.dataUpdate((time.time() - self.xls.startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))
-            self.pgB.dataUpdate((time.time() - self.xls.startTime),self.rls.sysID[0],self.rls.sysID[1])
-            
-            #Call Controller
-            ut = self.MVC.run(r.getRegister(2),(self.rls.sysID),r.getRegister(0))            
-            
-            #Write Ouput to valve (Limits already enforced by MVC method)
-            self.rw.writeData(ut) 
-
-            #Controller time keeping loop
-            time.sleep(self.sampleTime - (time.time() - startTime))
+            print self.count                    #Heartbeat
+            self.count += 1                     #Heartbeat
+            time.sleep(self.sampleTime - (time.time() - loopTime))
        
        
     def initialSetup(self):
-            self.X = np.array([[0,0,0],[0,0,0]])
-            self.Y = np.array([[0,0,0]])
-            r = self.rw.readData()
-            self.X[0,0] = r.getRegister(0)
-            self.X[1,0] = r.getRegister(3)
+            self.X = np.array([[0,0,0,0],[0,0,0,0]])
+            self.Y = np.array([[0,0,0,0]])
             
-            for i in range(1,3):         
-                r = self.rw.readData()
+            for i in range(0,4):
+                r = self.dataPipe()
                 self.X[0,i]   = r.getRegister(0)
                 self.X[1,i]   = r.getRegister(3)
-                self.Y[:,i-1] = self.X[0,i]
+                if i > 0:
+                    self.Y[:,i-1] = self.X[0,i]
                 time.sleep(self.sampleTime)
-            r = self.rw.readData()
-            self.Y[:,2] = r.getRegister(0)
-      
+                
+            r = self.dataPipe()
+            self.Y[:,3] = r.getRegister(0)
+            print self.X
+            print self.Y
             self.rls.setup(self.X,np.matrix.transpose(self.Y))
             print "Setup Complete"
+       
+       
+    def dataPipe(self):
+        if int(sys.argv[1]) == 1:
+            return self.r
+        else:
+            return self.rw.dataHandler('r')
+       
        
 def main():
     print "Starting"
     dmvc = discreteMVC()
     print "Please wait, Reading Initial Parameters..."
     dmvc.initialSetup()
-    print "Done"
+    print "Running Main Method..."
     dmvc.run()
+    dmvc.pg.end()
 
 if __name__ == '__main__':main()
