@@ -1,0 +1,24 @@
+#!/bin/bash 
+# Author: Alexander David Leech
+# Date:   27/1/2016
+# Desc:   Script to start the Neural Network Controller
+
+clear
+cd ../../src/neuralNetworkControl
+echo 'Simulation Mode? (Y/N)'
+read SIM
+
+if [ "$SIM" == "Y" ]
+then
+    python2 researchProjectAIControl.py 1
+    exit 1
+fi
+
+if [ "$SIM" == "N" ]
+then
+    python2 researchProjectAIControl.py 0
+    exit 1
+fi
+
+echo Invalid Input
+exit 1

@@ -30,8 +30,9 @@ class testModel:
 
     def __importSettings(self, filename):
         try:
-            with open(filename, "r") as f:
-                return yaml.load(f)
+            with open(filename, 'rb') as f:
+                settings = yaml.load(f)
+                return settings
         except IOError:
             print("Failed to read config file")
             raise SystemExit()
@@ -64,5 +65,4 @@ class testModel:
 
     def getRegister(self,i):
         # Method to maintain compatibility with the modbus returned data type
-        self.__modelSys()
         return [self.h, 0, self.sp, self.u][i]

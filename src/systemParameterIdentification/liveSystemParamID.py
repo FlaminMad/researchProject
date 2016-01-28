@@ -80,6 +80,7 @@ class liveSystemParamID:
        
     def dataPipe(self):
         if int(sys.argv[1]) == 1:
+            self.r.readModel()
             return self.r
         else:
             return self.rw.dataHandler('r')

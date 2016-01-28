@@ -14,14 +14,14 @@ import sys ; sys.path.insert(0, '../dataLoggingTool')
 from Modbus import comClient                #Import Modbus Comms Class
 from xlsLogging import xlsLogging
 from plotActiveGraph import plotActiveGraph
-from PIDController import PIDController as controller
+from neuralNetwork import neuralNetwork
 
 if int(sys.argv[1]) == 1:
-    sys.path.insert(0, '../../tests')    
-    from testModel import testModel               #Import Simulation Class
+    sys.path.insert(0, '../../tests')
+    from testModel import testModel     #Import Simulation Class
 
         
-class researchProjectPID:
+class researchProjectAIControl:
     
     
     def __init__(self):
@@ -29,12 +29,13 @@ class researchProjectPID:
         self.rw = comClient()           #Initialise Modbus comms class 
         self.xls = xlsLogging(4)        #Initialise excel data logging
         self.pg = plotActiveGraph()     #Initialise graphical plot
-        self.ctrl = controller()        #Initialise PID Controller
+        self.NNctrl = neuralNetwork()        #Initialise Neural Network
         if int(sys.argv[1]) == 1:
             self.r = testModel()        #Initialise simulated lab rig
 
         # Variables
         self.count = 0                  #For 'heart beat' counter
+        self.sampleTime = 10
 
     def run(self):
         startTime = time.time()         #For time reference
@@ -42,9 +43,9 @@ class researchProjectPID:
         while(True):
             loopTime = time.time()      #Itteration start time
             r = self.readDataPipe()                 #Read data
-            self.xls.writeXls(startTime,r)      #Log data in excel
+            #self.xls.writeXls(startTime,r)      #Log data in excel
             self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))    #Add data to plot
-            u = self.ctrl.runCtrl(r.getRegister(0),r.getRegister(2),r.getRegister(3))       #Run the controller
+            u = self.NNctrl.activate(r.getRegister(0),r.getRegister(2))
             
             if int(sys.argv[1]) == 1:
                 self.r.writeModel(u)            #Write to model
@@ -53,7 +54,7 @@ class researchProjectPID:
 
             print self.count                    #Heartbeat
             self.count += 1                     #Heartbeat
-            time.sleep(self.ctrl.dT - (time.time() - loopTime))
+            time.sleep(self.sampleTime - (time.time() - loopTime))
     
     def readDataPipe(self):
         if int(sys.argv[1]) == 1:
@@ -63,7 +64,7 @@ class researchProjectPID:
             return self.rw.dataHandler('r') 
 
 def main():
-    rp = researchProjectPID()
+    rp = researchProjectAIControl()
     rp.run()
     rp.pg.end()
     
