@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 Author: Alexander David Leech
-Date:   14/10/2015
-Rev:    1
+Date:   27/01/2016
+Rev:    2
 Lang:   Python 2.7
 Deps:   Pyserial, Pymodbus
 Desc:   Main file for discrete minimum variance controller using online
@@ -19,7 +19,7 @@ import sys ; sys.path.insert(0, '../systemParameterIdentification')
 from RLS import RLS                         #Import Recursive Least Squares
 from Modbus import comClient                #Import Modbus Comms Class
 from xlsLogging import xlsLogging           #Import Data Logging Class
-from plotActiveGraph import plotActiveGraph
+from plotActiveGraph import plotActiveGraph #Import Graph Tools Class
 
 if int(sys.argv[1]) == 1:
     sys.path.insert(0, '../../tests')    
