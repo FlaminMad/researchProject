@@ -46,10 +46,9 @@ client.connect()
 
 
 while(True):
-    client.write_register(3,1000,unit=0x01)   
-    time.sleep(4)
-    client.write_register(3,0,unit=0x01)
-    time.sleep(4)
+    for i in range(0, 11):
+        client.write_register(3,(i*100),unit=0x01)   
+        time.sleep(2)
 
 client.close()
 

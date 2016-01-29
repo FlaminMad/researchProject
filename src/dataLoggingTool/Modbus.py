@@ -51,7 +51,7 @@ class comClient:
     def dataHandler(self, operation, *data):
         if operation == 'r':
             for i in range(3):
-                r = self.readData()
+                r = self.__readData()
                 if r != IOError:
                     break
                 elif i == 2:
