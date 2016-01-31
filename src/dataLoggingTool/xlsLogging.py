@@ -77,8 +77,8 @@ class xlsLogging:
             self.ws.cell(row = self.i+2+self.osFactor, column = x+1+self.osFactor).value = data.getRegister(x)
             
         if self.varNo == 6:
-            self.ws.cell(row = self.i+2, column = 5).value = params[0][0]
-            self.ws.cell(row = self.i+2, column = 6).value = params[0][1]
+            self.ws.cell(row = self.i+2+self.osFactor, column = 5+self.osFactor).value = params[0][0]
+            self.ws.cell(row = self.i+2+self.osFactor, column = 6+self.osFactor).value = params[0][1]
             
         self.wb.save('dataLogging.xlsx')
         self.i += 1     

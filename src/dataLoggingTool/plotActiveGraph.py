@@ -13,13 +13,7 @@ Deps:   numpy, matplotlib, warnings
 import numpy as np
 import yaml
 import matplotlib.pyplot as plt
-
-# Example Usage:
-# pag = plotActiveGraph()
-# pag.dataUpdate(x,y1,y2,y3...)
-# Ensure to add:
-#    pag.plt.show(block=True)
-# at the end of the main method to keep graph open on return
+import warnings
 
 
 class plotActiveGraph:
@@ -74,7 +68,7 @@ class plotActiveGraph:
             if self.config["no_of_plots"] == 1:
                 for i in range (0, (len(self.ydata[:,0]))):
                     self.ax1.plot(self.xdata,np.transpose(self.ydata[i,:]),self.config["pen_" + str(i+1) + "_colour"],label=self.config["pen_" + str(i+1) + "_name"])
-            else:            
+            else:
                 for i in range (0, 3):
                     self.ax1.plot(self.xdata,np.transpose(self.ydata[i,:]),self.config["pen_" + str(i+1) + "_colour"],label=self.config["pen_" + str(i+1) + "_name"])
                 for i in range (3, (len(self.ydata[:,0]))):
@@ -83,25 +77,26 @@ class plotActiveGraph:
         except IndexError:
             print ("Check ALL variables passed are setup in plotPenConf")
         
-        # Sets up the legend
-        if self.startFlag == 0:
+        if self.startFlag == 0:                 # Sets up the legend
             plt.legend()
-            self.startFlag = 1        
-        # Draws the graph to your screen
-        plt.draw()
-        # Workaround to avoid the freezing problem
-        plt.pause(0.001)
+            self.startFlag = 1
+        
+        plt.draw()                              # Draws the graph to your screen
+        warnings.simplefilter("ignore")         # Hide depreciation warnings
+        plt.pause(0.001)                        # Workaround to avoid the freezing problem
     
     
     def _importSettings(self):
         #Reads plotPenConfiguration file to import colours and labels
-        try:        
+        try:
             with open("plotPenConfiguration.yaml", "r") as f:
                 config = yaml.load(f)
         except IOError:
             print("Failed to read config file")
-            raise SystemExit()   
+            raise SystemExit()
         return config
         
+        
     def end(self):
+        print("Close plot window to finish...")
         plt.show(block=True)

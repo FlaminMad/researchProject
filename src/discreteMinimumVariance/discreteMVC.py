@@ -17,30 +17,34 @@ from MVController import MVController
 import sys ; sys.path.insert(0, '../dataLoggingTool')
 import sys ; sys.path.insert(0, '../systemParameterIdentification')
 from RLS import RLS                         #Import Recursive Least Squares
-from Modbus import comClient                #Import Modbus Comms Class
+from osTools import osTools                 #For detecting exit keypress
 from xlsLogging import xlsLogging           #Import Data Logging Class
 from plotActiveGraph import plotActiveGraph #Import Graph Tools Class
 
 if int(sys.argv[1]) == 1:
     sys.path.insert(0, '../../tests')    
     from testModel import testModel         #Import Simulation Class
+else:
+    from Modbus import comClient            #Import Modbus Comms Class
 
 
 class discreteMVC:
 
     def __init__(self):
         # Objects
-        self.rw = comClient()           #Initialise Modbus comms class 
+        self.ext = osTools()            #Initialise data key press
         self.xls = xlsLogging(6)        #Initialise excel data logging
         self.pg = plotActiveGraph()     #For graphical plot (PV,SP,OP)
         self.rls = RLS()                #Initialise Recursive Least Squares Object
         self.MVC = MVController()       #Initialise Controller        
         if int(sys.argv[1]) == 1:
             self.r = testModel()        #Initialise simulated lab rig
+        else:
+            self.rw = comClient()           #Initialise Modbus comms class 
 
         # Variables
         self.count = 0                  #For 'heart beat' counter
-        self.sampleTime = 40            #Controller loop time       
+        self.sampleTime = 40            #Controller loop time
         
         
     def run(self):
@@ -64,6 +68,8 @@ class discreteMVC:
             else:
                 self.rw.dataHandler('w',u)      #Write to MODBUS system            
             
+            if self.ext.kbdExit():              #Detect exit condition
+                break
             print self.count                    #Heartbeat
             self.count += 1                     #Heartbeat
             time.sleep(self.sampleTime - (time.time() - loopTime))

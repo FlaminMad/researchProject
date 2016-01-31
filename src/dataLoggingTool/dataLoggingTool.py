@@ -10,21 +10,28 @@
 """
 import sys 
 import time                                   #Time based functions
-from Modbus import comClient                  #Import Modbus Comms Class
+from osTools import osTools                   #For detecting exit keypress
 from xlsLogging import xlsLogging             #Import Excel Logging Class
 from plotActiveGraph import plotActiveGraph   #Import Graph Plotting Class
+
 if int(sys.argv[1]) == 1:
     sys.path.insert(0, '../../tests')    
-    from testModel import testModel               #Import Simulation Class
-        
+    from testModel import testModel           #Import Simulation Class
+else:
+    from Modbus import comClient              #Import Modbus Comms Class
+
+
 class dataLoggingTool:
     
     def __init__(self):
         # Objects
-        self.rw = comClient()           #Initialise Modbus comms class 
+        self.ext = osTools()            #Initialise data key press
         self.xls = xlsLogging(4)        #Initialise excel data logging
         self.pg = plotActiveGraph()     #Initialise graphical plot
-        self.r = testModel()            #Initialise simulated lab rig
+        if int(sys.argv[1]) == 1:
+            self.r = testModel()        #Initialise simulated lab rig
+        else:
+            self.rw = comClient()       #Initialise Modbus comms class
 
         # Variables
         self.Interval = 5               #For Time Interval
@@ -40,9 +47,12 @@ class dataLoggingTool:
             self.xls.writeXls(startTime,r)  #Log data in excel
             self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))    #Add data to plot                
             
+            if self.ext.kbdExit():          #Detect exit condition
+                break
             print self.count                #Heartbeat
             self.count += 1                 #Heartbeat
             time.sleep(self.Interval - (time.time() - loopTime))   #Loop Interval
+
 
     def dataPipe(self):
         if int(sys.argv[1]) == 1:

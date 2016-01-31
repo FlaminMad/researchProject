@@ -14,32 +14,37 @@ import numpy as np                          #Import numpy for array & matrices
 from RLS import RLS                         #Import Recursive Least Squares
 
 import sys ; sys.path.insert(0, '../dataLoggingTool')
-from Modbus import comClient                #Import Modbus Comms Class
+from osTools import osTools                 #For detecting exit keypress
 from xlsLogging import xlsLogging           #Import Data Logging Class
 from plotActiveGraph import plotActiveGraph #Graphing Tools
 
 if int(sys.argv[1]) == 1:
     sys.path.insert(0, '../../tests')    
     from testModel import testModel         #Import Simulation Class
+else:
+    from Modbus import comClient            #Import Modbus Comms Class
 
 
 class liveSystemParamID: 
 
     def __init__(self):
         # Objects
-        self.rw = comClient()           #Initialise Modbus comms class 
+        self.ext = osTools()            #Initialise data key press
         self.xls = xlsLogging(6)        #Initialise excel data logging
-        self.pg = plotActiveGraph()    #For graphical plot (PV,SP,OP)
+        self.pg = plotActiveGraph()     #For graphical plot (PV,SP,OP)
         self.rls = RLS()                #Initialise Recursive Least Squares Object
+        
         if int(sys.argv[1]) == 1:
             self.r = testModel()        #Initialise simulated lab rig
+        else:
+            self.rw = comClient()       #Initialise Modbus comms class
 
         # Variables
         self.count = 0                  #For 'heart beat' counter
         self.sampleTime = 30            #Controller loop time
 
     def run(self):
-        startTime = time.time()         #For time reference    
+        startTime = time.time()         #For time reference
         y = self.Y[:,2]                 #Transition setup values into the main loop
         x = np.array([self.X[0,2],self.X[1,2]])
 
@@ -49,13 +54,14 @@ class liveSystemParamID:
             r = self.dataPipe()                 #Read controller data as r
             y = np.array([r.getRegister(0)])    #Update y value
             self.rls.solve(x,y)                 #Call recursive least squares method using y and x '-1'
-            x = np.array([r.getRegister(0),r.getRegister(3)])   #Update x values            
+            x = np.array([r.getRegister(0),r.getRegister(3)])   #Update x values
             self.xls.writeXls(startTime,r,self.rls.sysID) #Pass data to excel for logging purposes
             self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3),self.rls.sysID[0],self.rls.sysID[1])
 
-           
-            print self.count            #Heartbeat
-            self.count += 1             #Heartbeat
+            if self.ext.kbdExit():              #Detect exit condition
+                break
+            print self.count                    #Heartbeat
+            self.count += 1                     #Heartbeat
             time.sleep(self.sampleTime - (time.time() - loopTime))
        
        
@@ -73,8 +79,6 @@ class liveSystemParamID:
                 
             r = self.dataPipe()
             self.Y[:,3] = r.getRegister(0)
-            print self.X
-            print self.Y
             self.rls.setup(self.X,np.matrix.transpose(self.Y))
             print "Setup Complete"
        
