@@ -15,7 +15,7 @@ import numpy as np                          #Import numpy for array & matrices
 from MVController import MVController
 
 import sys ; sys.path.insert(0, '../dataLoggingTool')
-sys.path.insert(0, '../systemParameterIdentification')
+import sys ; sys.path.insert(0, '../systemParameterIdentification')
 from RLS import RLS                         #Import Recursive Least Squares
 from osTools import osTools                 #For detecting exit keypress
 from xlsLogging import xlsLogging           #Import Data Logging Class
@@ -40,7 +40,7 @@ class discreteMVC:
         if int(sys.argv[1]) == 1:
             self.r = testModel()        #Initialise simulated lab rig
         else:
-            self.rw = comClient()       #Initialise Modbus comms class 
+            self.rw = comClient()           #Initialise Modbus comms class 
 
         # Variables
         self.count = 0                  #For 'heart beat' counter
