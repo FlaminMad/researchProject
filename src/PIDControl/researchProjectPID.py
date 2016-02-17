@@ -33,7 +33,7 @@ class researchProjectPID:
         self.pg = plotActiveGraph()     #Initialise graphical plot
         self.ctrl = controller()        #Initialise PID Controller
         if int(sys.argv[1]) == 1:
-            self.r = testModel()        #Initialise simulated lab rig
+            self.r = testModel("../../tests/")        #Initialise simulated lab rig
         else:
             self.rw = comClient()       #Initialise Modbus comms class
 

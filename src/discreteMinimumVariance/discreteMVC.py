@@ -38,7 +38,7 @@ class discreteMVC:
         self.rls = RLS()                #Initialise Recursive Least Squares Object
         self.MVC = MVController()       #Initialise Controller        
         if int(sys.argv[1]) == 1:
-            self.r = testModel()        #Initialise simulated lab rig
+            self.r = testModel("../../tests/")        #Initialise simulated lab rig
         else:
             self.rw = comClient()       #Initialise Modbus comms class 
 

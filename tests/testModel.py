@@ -17,9 +17,10 @@ import numpy as np
 
 class testModel:
     
-    def __init__(self):
-        self.mdlConf = self.__importSettings("../../tests/testSysParams.yaml")
-        self.sp = self.__importSettings("../../tests/sp.yaml")['sp']
+    def __init__(self,basedir):
+        self.basedir = basedir
+        self.mdlConf = self.__importSettings(self.basedir + "testSysParams.yaml")
+        self.sp = self.__importSettings(self.basedir + "sp.yaml")['sp']
         self.Av = (np.pi*np.square(self.mdlConf['outDiam']))/4
         self.h = self.mdlConf['hInitial']
         self.__updateFlow(self.mdlConf['uInitial'])
@@ -34,14 +35,15 @@ class testModel:
                 settings = yaml.load(f)
                 return settings
         except IOError:
-            print("Failed to read config file")
+            print("Failed to read model config file")
             raise SystemExit()
       
     
     def __modelSys(self):
         #Note: contains time critical equation
         timeNow = time.time()
-        self.h += (timeNow-self.refTime)*(self.qin - self.Av*np.sqrt(19.62*self.h))/self.mdlConf['tankArea']   
+        self.h += (timeNow-self.refTime)*(self.qin - self.Av*np.sqrt(19.62*self.h))/self.mdlConf['tankArea']
+        self.h += self.mdlConf["noiseMultiplier"]*(self.u/100)*(np.random.random()-0.5)
         self.refTime = timeNow
         return
     
@@ -55,7 +57,7 @@ class testModel:
     
     def readModel(self):
         self.__modelSys()
-        self.sp = self.__importSettings("../../tests/sp.yaml")['sp']
+        self.sp = self.__importSettings(self.basedir + "sp.yaml")['sp']
         return
 
     def writeModel(self,u):

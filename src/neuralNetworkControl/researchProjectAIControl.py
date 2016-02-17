@@ -31,7 +31,7 @@ class researchProjectAIControl:
         self.pg = plotActiveGraph()     #Initialise graphical plot
         self.NNctrl = neuralNetwork()        #Initialise Neural Network
         if int(sys.argv[1]) == 1:
-            self.r = testModel()        #Initialise simulated lab rig
+            self.r = testModel("../../tests/")        #Initialise simulated lab rig
 
         # Variables
         self.count = 0                  #For 'heart beat' counter
