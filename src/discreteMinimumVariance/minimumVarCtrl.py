@@ -107,12 +107,13 @@ class minimumVarCtrl:
             modelError = processOutput.getRegister(0) - self.modelOutput    #Drawing ID 'F'
             print modelError            
             #Drawing ID 'D'
-            self.rls.solve(np.array([processOutput.getRegister(0),\
-                                     processOutput.getRegister(3)]), modelError)
-                                     
             ctrlOutput = self.mvctrl.run(processOutput.getRegister(2),\
                                          self.rls.sysID,\
                                          processOutput.getRegister(0))      #Drawing ID 'C'
+                                         
+            self.rls.solve(np.array([processOutput.getRegister(0),\
+                                     processOutput.getRegister(3)]), modelError)
+                                          
             
             self.process('w',ctrlOutput)                                    #Drawing ID 'A' & 'B' - Write
             self.modelOutput = self.model(processOutput, self.rls.sysID)    #Read model estimate of process output

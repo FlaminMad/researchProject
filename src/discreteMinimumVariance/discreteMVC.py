@@ -56,12 +56,15 @@ class discreteMVC:
             loopTime = time.time()              #Itteration start time
             
             r = self.dataPipe()                 #Read controller data as r
+            
+            u = self.MVC.run(r.getRegister(2),(self.rls.sysID),r.getRegister(0))
+            
             y = np.array([r.getRegister(0)])    #Update y value
             self.rls.solve(x,y)                 #Call recursive least squares method using y and x '-1'
             x = np.array([r.getRegister(0),r.getRegister(3)])   #Update x values            
             self.xls.writeXls(startTime,r,self.rls.sysID) #Pass data to excel for logging purposes
             self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3),self.rls.sysID[0],self.rls.sysID[1])
-            u = self.MVC.run(r.getRegister(2),(self.rls.sysID),r.getRegister(0))
+#            u = self.MVC.run(r.getRegister(2),(self.rls.sysID),r.getRegister(0))
             
             if int(sys.argv[1]) == 1:
                 self.r.writeModel(u)            #Write to model

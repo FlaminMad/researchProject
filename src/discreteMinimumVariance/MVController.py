@@ -17,7 +17,7 @@ class MVController:
         print "Controller Initialised"
 
     def run(self,SP,sysID,yt):
-        ut = (SP-(sysID[0]*yt))/sysID[1]
+        ut = (SP-(sysID[1]*yt))/sysID[0]
         
         if int(sys.argv[1]) == 1:
             lim = 100
