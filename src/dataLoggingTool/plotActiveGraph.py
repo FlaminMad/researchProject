@@ -92,7 +92,7 @@ class plotActiveGraph:
             with open("plotPenConfiguration.yaml", "r") as f:
                 config = yaml.load(f)
         except IOError:
-            print("Failed to read config file")
+            print("Failed to read graphing tool config file")
             raise SystemExit()
         return config
         

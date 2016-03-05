@@ -1,0 +1,5 @@
+# Setup On Off control in this file
+
+tolerance: 5
+vlvHighLimit: 100
+vlvLowLimit: 0
