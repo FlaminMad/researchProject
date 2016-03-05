@@ -2,29 +2,16 @@
 # -*- coding: utf-8 -*-
 """
 Author: Alexander David Leech
-Date:   14/10/2015
+Date:   05/03/2016
 Rev:    2
 Lang:   Python 2.7
 Deps:   None
-Desc:   Contains PID controller class for import
+Desc:   Contains Enhanced PID controller class for import
 """
 
 import numpy as np
 
 class PIDController:
-     
-     #Adjustable Controller Parameters
-     Kg = 1.32
-     Ki = 86.812
-     Kd = 13.095
-     dT = 5             #Time Interval
-     ctrlType = "PI"
-     antiWindUp = 0.0   #Anti-Windup (Between 0.05 & 0.25)
-
-     #Setup Valve Limitations
-     lowLimit = 0       # Valve low limit
-     highLimit = 1000   # Valve high limit
-     
      
      def __init__(self):
          self.startupFlag = True        # For smooth transitioning

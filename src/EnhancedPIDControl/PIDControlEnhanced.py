@@ -15,7 +15,7 @@ import sys ; sys.path.insert(0, '../dataLoggingTool')
 from osTools import osTools                 #For detecting exit keypress
 from xlsLogging import xlsLogging
 from plotActiveGraph import plotActiveGraph
-from PIDController import PIDController as controller
+from PIDControllerEnhanced import PIDControllerEnhanced as controller
 
 if int(sys.argv[1]) == 1:
     sys.path.insert(0, '../../tests')    
@@ -24,7 +24,7 @@ else:
     from Modbus import comClient            #Import Modbus Comms Class
 
         
-class researchProjectPID:
+class PIDControlEnhanced:
         
     def __init__(self):
         # Objects
@@ -47,8 +47,7 @@ class researchProjectPID:
         while(True):
             loopTime = time.time()              #Itteration start time
             r = self.readDataPipe()             #Read data
-            
-            
+
             self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))    #Add data to plot
             u = self.ctrl.runCtrl(r.getRegister(0),r.getRegister(2),r.getRegister(3))       #Run the controller
             self.xls.writeXls(startTime,r,[self.ctrl.spErr,0])      #Log data in excel
@@ -74,7 +73,7 @@ class researchProjectPID:
 
 
 def main():
-    rp = researchProjectPID()
+    rp = PIDControlEnhanced()
     rp.run()
     rp.pg.end()
     

@@ -28,9 +28,8 @@ class OnOffController:
          return self.u
      
      def _importSettings(self):
-        #Reads plotPenConfiguration file to import colours and labels
         try:
-            with open("OnOffParams.yaml", "r") as f:
+            with open("OnOffSettings.yaml", "r") as f:
                 config = yaml.load(f)
         except IOError:
             print("Failed to read On/Off config file")
