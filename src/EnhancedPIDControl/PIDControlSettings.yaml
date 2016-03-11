@@ -6,11 +6,11 @@ Ki: 86.812
 Kd: 13.095
 
 # Time Interval
-dT: 5             
+dT: 10
 
 # Limits
 vlvLowLimit: 0
-vlvHighLimit: 100
+vlvHighLimit: 1000
 
 # Advanced
 antiWindUp: 0.0   #Anti-Windup (Between 0.05 & 0.25)
