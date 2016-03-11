@@ -23,6 +23,7 @@ class RLS:
         x = np.matrix.transpose(xT)
         self.P = ma.matrix_power(np.dot(xT[:,:2],x[:2,:]),-1)
         self.sysID = np.dot(np.dot(self.P,xT[:,:2]),y[:2,0])
+#        self.sysID = np.array([0.95,0.02])
     
     def solve(self,x,y):
         #RLS Solving Algorithm where sysID contains identified parameters

@@ -41,12 +41,17 @@ class liveSystemParamID:
 
         # Variables
         self.count = 0                  #For 'heart beat' counter
-        self.sampleTime = 30            #Controller loop time
+        self.intDataPoints = 4          #Initial Data Points to be read
+        self.sampleTime = 40            #Controller loop time
 
     def run(self):
         startTime = time.time()         #For time reference
         y = self.Y[:,2]                 #Transition setup values into the main loop
         x = np.array([self.X[0,2],self.X[1,2]])
+
+        print y
+        print x
+        return
 
         while(True):
             loopTime = time.time()              #Itteration start time
@@ -66,10 +71,10 @@ class liveSystemParamID:
        
        
     def initialSetup(self):
-            self.X = np.array([[0,0,0,0],[0,0,0,0]])
-            self.Y = np.array([[0,0,0,0]])
-            
-            for i in range(0,4):
+            self.X = np.array([np.zeros(self.intDataPoints),np.zeros(self.intDataPoints)])
+            self.Y = np.array([np.zeros(self.intDataPoints)])
+
+            for i in range(0,self.intDataPoints):
                 r = self.dataPipe()
                 self.X[0,i]   = r.getRegister(0)
                 self.X[1,i]   = r.getRegister(3)
@@ -78,7 +83,9 @@ class liveSystemParamID:
                 time.sleep(self.sampleTime)
                 
             r = self.dataPipe()
-            self.Y[:,3] = r.getRegister(0)
+            self.Y[:,(self.intDataPoints-1)] = r.getRegister(0)
+            print self.X            
+            print self.Y
             self.rls.setup(self.X,np.matrix.transpose(self.Y))
             print "Setup Complete"
        
