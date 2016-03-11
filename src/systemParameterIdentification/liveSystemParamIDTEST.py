@@ -41,17 +41,18 @@ class liveSystemParamID:
 
         # Variables
         self.count = 0                  #For 'heart beat' counter
-        self.sampleTime = 30            #Controller loop time
+        self.sampleTime = 20            #Controller loop time
 
     def run(self):
         startTime = time.time()         #For time reference
-        y = self.Y[:,2]                 #Transition setup values into the main loop
-        x = np.array([self.X[0,2],self.X[1,2]])
+#        z = np.array([0,self.X[0,3]],[0,self.X[1,3]]])     #Array in the form Yt, Ut
+        time.sleep(self.sampleTime - (time.time()-self.timer))
 
         while(True):
             loopTime = time.time()              #Itteration start time
-            
             r = self.dataPipe()                 #Read controller data as r
+            z[:,0] = z[:,1]                     #Shift Array
+            z[:,1] = 1                                    #Update Array
             y = np.array([r.getRegister(0)])    #Update y value
             self.rls.solve(x,y)                 #Call recursive least squares method using y and x '-1'
             x = np.array([r.getRegister(0),r.getRegister(3)])   #Update x values
@@ -66,24 +67,19 @@ class liveSystemParamID:
        
        
     def initialSetup(self):
-            self.X = np.array([[0,0,0,0],[0,0,0,0]])
-            self.Y = np.array([[0,0,0,0]])
+            self.X = np.array([[0,0,0,0,0],[0,0,0,0,0]])
+            self.Y = np.array([[0,0,0,0,0]])
             
-            for i in range(0,4):
+            for i in range(0,5):
                 r = self.dataPipe()
                 self.X[0,i]   = r.getRegister(0)
                 self.X[1,i]   = r.getRegister(3)
                 if i > 0:
                     self.Y[:,i-1] = self.X[0,i]
                 time.sleep(self.sampleTime)
+                self.timer = time.time()                
                 
-            r = self.dataPipe()
-            self.Y[:,3] = r.getRegister(0)
-            
-            print self.X            
-            print np.matrix.transpose(self.Y)
-            
-            self.rls.setup(self.X,np.matrix.transpose(self.Y))
+            self.rls.setup(self.X[:,:-1],np.matrix.transpose(self.Y[:,:-1]))           
             print "Setup Complete"
        
     def dataPipe(self):
@@ -99,7 +95,7 @@ def main():
     print "Please wait, Reading Initial Parameters..."
     ID.initialSetup()
     print "Running Main Method..."
-    ID.run()
+#    ID.run()
     ID.pg.end()
 
 if __name__ == '__main__':main()    
