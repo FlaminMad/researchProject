@@ -14,16 +14,20 @@ import numpy as np
 class PIDController:
      
      #Adjustable Controller Parameters
-     Kg = 1.32
-     Ki = 86.812
-     Kd = 13.095
+     Kg = 8.29
+     Ki = 24.11
+     Kd = 3.58
      dT = 5             #Time Interval
-     antiWindUp = 0.2   #Anti-Windup (Between 0.05 & 0.25)
+     antiWindUp = 0     #Anti-Windup (Between 0.05 & 0.25)
+     
+     #Experimental Params
+    
 
      #Setup Fixed Controller Variables
      lowLimit = 0       # Valve low limit
-     highLimit = 1000   # Valve high limit
+     highLimit = 100   # Valve high limit
      startupFlag = True    # For smooth transitioning
+     spErr = 0
      ctrlType = "PID"
      
      
@@ -37,22 +41,24 @@ class PIDController:
              self.startupFlag = False
          
          #Run main PID algorithm based on selected type
-         if self.ctrlType == "PI":
+         if self.ctrlType == "P":
+             u = self.Kg*(error)
+         elif self.ctrlType == "PI":
              u = self.Kg*(error + self.__integral(error))
          elif self.ctrlType == "PID":
              u = self.Kg*(error + self.__integral(error) + self.__derivitive(pv))
          else:
-             raise ValueError('Invalid Control Type - Options are PI & PID')
+             raise ValueError('Invalid Control Type - Options are P, PI & PID')
              
          #Enforce Valve Limitations and antiwindup
          if u > self.highLimit:
              self.spErr += (self.antiWindUp * error)
-             print "High Alarm"
-             return 1000
+             print "High Saturation"
+             return 100
              
          elif u < self.lowLimit:
              self.spErr += (self.antiWindUp * error)
-             print "Low Alarm"
+             print "Low Saturation"
              return 0
              
          else:
@@ -77,11 +83,14 @@ class PIDController:
         self.deriv = pv
         
         #PI Control - Calc sp error rounded to 0 d.p
-        if self.ctrlType == "PI":
+        if self.ctrlType == "P":
+            self.spErr = 0
+            
+        elif self.ctrlType == "PI":
             self.spErr = np.around(((self.Ki/self.dT)*((u/self.Kg)-err)),0)
             
         elif self.ctrlType == "PID":
-            self.spErr = np.around((self.Ki/self.dT)*((u/self.Kg)-err-((self.deriv*self.Kd)/self.dT)),0)
-        
+            self.spErr = np.around(((self.Ki/self.dT)*((u/self.Kg)-err)),0)
+            
         else:
-            raise ValueError('Invalid Control Type - Options are PI & PID')
+            raise ValueError('Invalid Control Type - Options are P, PI & PID')

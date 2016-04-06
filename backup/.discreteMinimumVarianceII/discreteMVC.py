@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 Author: Alexander David Leech
-Date:   05/04/2016
-Rev:    3
+Date:   27/01/2016
+Rev:    2
 Lang:   Python 2.7
 Deps:   Pyserial, Pymodbus
 Desc:   Main file for discrete minimum variance controller using online
@@ -44,34 +44,27 @@ class discreteMVC:
 
         # Variables
         self.count = 0                  #For 'heart beat' counter
-        self.intDataPoints = 4          #Initial Data Points to be read
         self.sampleTime = 40            #Controller loop time
         
         
     def run(self):
-        z = np.array([[0,self.X[0,self.intDataPoints-1]],[0,self.X[1,self.intDataPoints-1]]])     #Array in the form Yt, Ut      
-        time.sleep(self.sampleTime - (time.time()-self.timer))
-        startTime = time.time()                             #For time reference
+        startTime = time.time()         #For time reference    
+        y = self.Y[:,2]                 #Transition setup values into the main loop
+        x = np.array([self.X[0,2],self.X[1,2]]) 
        
         while(True):
-            loopTime = time.time()                          #Itteration start time
-            r = self.dataPipe()                             #Read controller data as r
-            z[:,0] = z[:,1]                                 #Shift Array
-            z[:,1] = r.getRegister(0),r.getRegister(3)      #Update Array       
-            self.rls.solve(z[:,0],z[0,1])                   #Call recursive least squares method
-            self.xls.writeXls(startTime,r,self.rls.sysID)   #Pass data to excel for logging purposes
+            loopTime = time.time()              #Itteration start time
+            
+            r = self.dataPipe()                 #Read controller data as r
+            
+            u = self.MVC.run(r.getRegister(2),(self.rls.sysID),r.getRegister(0))
+            
+            y = np.array([r.getRegister(0)])    #Update y value
+            self.rls.solve(x,y)                 #Call recursive least squares method using y and x '-1'
+            x = np.array([r.getRegister(0),r.getRegister(3)])   #Update x values            
+            self.xls.writeXls(startTime,r,self.rls.sysID) #Pass data to excel for logging purposes
             self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3),self.rls.sysID[0],self.rls.sysID[1])
-            u = self.MVC.run(z[0,1],r.getRegister(2),(self.rls.sysID))
-            print "--------------------------------"            
-            print("Time:" + str((time.time() - startTime)))            
-            print("z[:,0]: " + str(z[:,0]))
-            print("z[:,1]: " + str(z[:,1]))
-            print("SP " + str(r.getRegister(2)))
-            print("SysID " + str(self.rls.sysID))
-            print("U " + str(u))
-            print "--------------------------------"
-            
-            
+#            u = self.MVC.run(r.getRegister(2),(self.rls.sysID),r.getRegister(0))
             
             if int(sys.argv[1]) == 1:
                 self.r.writeModel(u)            #Write to model
@@ -86,20 +79,22 @@ class discreteMVC:
        
        
     def initialSetup(self):
-            self.X = np.array([np.zeros(self.intDataPoints),np.zeros(self.intDataPoints)])
-            self.Y = np.array([np.zeros(self.intDataPoints)])
+            self.X = np.array([[0,0,0,0],[0,0,0,0]])
+            self.Y = np.array([[0,0,0,0]])
             
-            for i in range(0,self.intDataPoints):
+            for i in range(0,4):
                 r = self.dataPipe()
                 self.X[0,i]   = r.getRegister(0)
                 self.X[1,i]   = r.getRegister(3)
                 if i > 0:
                     self.Y[:,i-1] = self.X[0,i]
-                if i < (self.intDataPoints-1):
-                    time.sleep(self.sampleTime)
                 time.sleep(self.sampleTime)
-            self.timer = time.time()
-            self.rls.setup(self.X[:,:-1],np.matrix.transpose(self.Y[:,:-1]))
+                
+            r = self.dataPipe()
+            self.Y[:,3] = r.getRegister(0)
+            print self.X
+            print self.Y
+            self.rls.setup(self.X,np.matrix.transpose(self.Y))
             print "Setup Complete"
        
        

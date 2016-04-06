@@ -2,18 +2,15 @@
 """
 Author: Alexander David Leech
 Date:   30/09/2015
-Rev:    2
+Rev:    1
 Lang:   Python 2.7
-Deps:	  Pyserial, Pymodbus, logging
-Desc:   Cycles the output from 0 to 100% in steps of 10% at a defined rate
+Deps:	Pyserial, Pymodbus, logging
 """
 
 import time                                            # For sleep functionality
 import logging                                         # For detailed error output
 from pymodbus.client.sync import ModbusSerialClient \
 as ModbusClient                                        # Import MODBUS support class
-
-vlvTime = 2                                            # Time (s) between changes 
 
 comSettings = {    
                 "method"   : 'rtu',
@@ -32,8 +29,10 @@ client = ModbusClient(**comSettings)                    # Setup connection objec
 client.connect()                                        # Open the MODBUS connection
 
 while(True):
-    for i in range(0, 11):                              # Loop from 0 to 10
-        client.write_register(3,(i*100),unit=0x01)      # Write output to controller
-        time.sleep(vlvTime)                             # Sleep <predefined above> seconds
+    r = client.read_holding_registers(0, 4, unit=0x01)  # Read data back from the controller
+    print ("PV: ", str(r.getRegister(0)))               # Print PV register
+    print ("SP: ", str(r.getRegister(2)))               # Print SP register
+    print ("OP: ", str(r.getRegister(3)))               # Print OP register
+    time.sleep(4)                                       # Sample delay
 
 client.close()                                          # Close the connection

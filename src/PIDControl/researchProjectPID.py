@@ -29,7 +29,7 @@ class researchProjectPID:
     def __init__(self):
         # Objects
         self.ext = osTools()            #Initialise data key press
-        self.xls = xlsLogging(4)        #Initialise excel data logging
+        self.xls = xlsLogging(6)        #Initialise excel data logging
         self.pg = plotActiveGraph()     #Initialise graphical plot
         self.ctrl = controller()        #Initialise PID Controller
         if int(sys.argv[1]) == 1:
@@ -47,9 +47,10 @@ class researchProjectPID:
         while(True):
             loopTime = time.time()              #Itteration start time
             r = self.readDataPipe()             #Read data
-            self.xls.writeXls(startTime,r)      #Log data in excel
+            
             self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))    #Add data to plot
             u = self.ctrl.runCtrl(r.getRegister(0),r.getRegister(2),r.getRegister(3))       #Run the controller
+            self.xls.writeXls(startTime,r,[self.ctrl.spErr,0])      #Log data in excel
             
             if int(sys.argv[1]) == 1:
                 self.r.writeModel(u)            #Write to model

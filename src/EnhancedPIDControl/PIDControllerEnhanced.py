@@ -18,7 +18,8 @@ class PIDControllerEnhanced:
          self.settings = self._importSettings()
          self.dT = self.settings["dT"]
          self.prevSP = 0
-         self.startupFlag = True        # For smooth transitioning         
+         self.startupFlag = True        # For smooth transitioning
+         self.SPC = False
          return
      
      def runCtrl(self,pv,sp,op):
@@ -45,14 +46,14 @@ class PIDControllerEnhanced:
              self.startupFlag = False
              
          if sp - self.prevSP != 0:                          #Testing Methods
-             print " Set Point Change"
-             self.setPointChange = True
+             print "Set Point Change"
+             self.SPC = True
         
-         if self.setPointChange is True:
+         if self.SPC is True:
              if np.sign(error)!= np.sign(self.prevErr):     #Test for sign change
                  print "Sign Change"
-                 # Adjustment Method Here                 
-                 self.setPointChange = False                #Reset variable
+                 self.spErr = (0.18*sp) + 15.88                 
+                 self.SPC = False                           #Reset variable
          
          self.prevErr = error
          self.prevSP = sp
@@ -78,8 +79,8 @@ class PIDControllerEnhanced:
             self.spErr = np.around(((self.settings["Ki"]/self.dT)*((u/self.settings["Kg"])-error)),0)
             
         elif self.settings["ctrlType"] == "PID":
-            self.spErr = np.around((self.settings["Ki"]/self.dT)*((u/self.settings["Kg"])\
-                                        -error-((self.deriv*self.settings["Kd"])/self.dT)),0)
+            self.spErr = np.around(((self.settings["Ki"]/self.dT)*((u/self.settings["Kg"])-error)),0)
+            
         else:
             raise ValueError('Invalid Control Type - Options are PI & PID')
 

@@ -1,16 +1,16 @@
 # Setup Enhanced PID controller parameters in this file
 # Controller Tuning
-ctrlType: "PI"
-Kg: 1.32
-Ki: 86.812
-Kd: 13.095
+ctrlType: "PID"
+Kg:  8.29
+Ki: 24.11
+Kd:  3.58
 
 # Time Interval
-dT: 10
+dT: 5
 
 # Limits
 vlvLowLimit: 0
-vlvHighLimit: 1000
+vlvHighLimit: 100
 
 # Advanced
-antiWindUp: 0.0   #Anti-Windup (Between 0.05 & 0.25)
+antiWindUp: 0.0

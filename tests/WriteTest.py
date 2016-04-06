@@ -2,12 +2,15 @@
 """
 Author: Alexander David Leech
 Date:   30/09/2015
-Rev:    1
+Rev:    2
 Lang:   Python 2.7
-Deps:	Pyserial, Pymodbus
+Deps:	Pyserial, Pymodbus, logging
 """
 
-import time
+import time                                            # For sleep functionality
+import logging                                         # For detailed error output
+from pymodbus.client.sync import ModbusSerialClient \
+as ModbusClient                                        # Import MODBUS support class
 
 comSettings = {    
                 "method"   : 'rtu',
@@ -19,44 +22,16 @@ comSettings = {
                 "timeout"  : 1
               }
 
+logging.basicConfig()                                   # Setup error logging
+log = logging.getLogger()                               # Start logging
 
-#                                   #
-#  	 Import the MODBUS Protocol	  #
-#                                   #
-
-from pymodbus.client.sync import ModbusSerialClient as ModbusClient
-
-
-#                                 #
-# Configure logging on the client #
-#                                 #
-
-import logging
-logging.basicConfig()
-log = logging.getLogger()
-#log.setLevel(logging.INFO)
-
-
-#                                 #
-#  Setup and Open the connection  #
-#                                 #
-
-client = ModbusClient(**comSettings)
-client.connect()
-
+client = ModbusClient(**comSettings)                    # Setup connection object
+client.connect()                                        # Open the MODBUS connection
 
 while(True):
-    client.write_register(3,1000,unit=0x01)   
-    time.sleep(4)
-    client.write_register(3,0,unit=0x01)
-    time.sleep(4)
+    client.write_register(3,1000,unit=0x01)             # Write valve to 100%
+    time.sleep(4)                                       # Sleep 4 seconds
+    client.write_register(3,0,unit=0x01)                # Write valve to 0%
+    time.sleep(4)                                       # Sleep 4 seconds
 
-client.close()
-
-
-
-
-#ser = serial.Serial('COM4', 9600, parity='N', stopbits=1, timeout=1) 	#Configuration Settings as per RPI Tests
-
-
-
+client.close()                                          # Close the connection
