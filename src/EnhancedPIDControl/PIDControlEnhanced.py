@@ -50,12 +50,12 @@ class PIDControlEnhanced:
 
             self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3))    #Add data to plot
             u = self.ctrl.runCtrl(r.getRegister(0),r.getRegister(2),r.getRegister(3))       #Run the controller
-            self.xls.writeXls(startTime,r,[self.ctrl.spErr,0])      #Log data in excel
+            self.xls.writeXls(startTime,r,[self.ctrl.spErr,"-"])      #Log data in excel
             
             if int(sys.argv[1]) == 1:
-                self.r.writeModel(u)            #Write to model
+                self.r.writeModel(u)            #Write to model if active
             else:
-                self.rw.dataHandler('w',u)      #Write to MODBUS system
+                self.rw.dataHandler('w',u)      #Write to MODBUS system if active
             
             if self.ext.kbdExit():              #Detect exit condition
                 break

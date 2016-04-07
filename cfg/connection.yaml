@@ -1,7 +1,7 @@
 #Comment out port as necessary
 
 method: rtu
-port: COM3
+port: COM4
 #port: /dev/ttyUSB0
 stopbits: 1
 bytesize: 8

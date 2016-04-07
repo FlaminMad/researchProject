@@ -9,27 +9,30 @@ Deps:   None
 Desc:   Contains PID controller class for import
 """
 
+import sys
 import numpy as np
 
 class PIDController:
      
      #Adjustable Controller Parameters
-     Kg = 8.29
-     Ki = 24.11
-     Kd = 3.58
+     ctrlType = "PID"   #Valid options are P, PI & PID
+     Kg = 8.29          #Proportional Gain
+     Ki = 24.11         #Integral Gain
+     Kd = 3.58          #Derivative Gain
      dT = 5             #Time Interval
      antiWindUp = 0     #Anti-Windup (Between 0.05 & 0.25)
-     
-     #Experimental Params
-    
-
+          
      #Setup Fixed Controller Variables
      lowLimit = 0       # Valve low limit
-     highLimit = 100   # Valve high limit
      startupFlag = True    # For smooth transitioning
      spErr = 0
-     ctrlType = "PID"
      
+     #Setup valve high limit based on simulation/live sys     
+     if int(sys.argv[1]) == 1:
+         highLimit = 100
+     else:
+         highLimit = 1000
+
      
      def runCtrl(self,pv,sp,op):
          #Calculate error at current time
@@ -54,12 +57,12 @@ class PIDController:
          if u > self.highLimit:
              self.spErr += (self.antiWindUp * error)
              print "High Saturation"
-             return 100
+             return self.highLimit
              
          elif u < self.lowLimit:
              self.spErr += (self.antiWindUp * error)
              print "Low Saturation"
-             return 0
+             return self.lowLimit
              
          else:
              self.spErr += error
@@ -86,10 +89,7 @@ class PIDController:
         if self.ctrlType == "P":
             self.spErr = 0
             
-        elif self.ctrlType == "PI":
-            self.spErr = np.around(((self.Ki/self.dT)*((u/self.Kg)-err)),0)
-            
-        elif self.ctrlType == "PID":
+        elif self.ctrlType == "PI" or self.ctrlType == "PID":
             self.spErr = np.around(((self.Ki/self.dT)*((u/self.Kg)-err)),0)
             
         else:

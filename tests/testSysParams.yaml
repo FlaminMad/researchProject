@@ -2,6 +2,6 @@
 
 tankArea: 0.06
 outDiam: 0.025
-noiseMultiplier: 1.0
-hInitial: 30.0
-uInitial: 40
+noiseMultiplier: 0.0
+hInitial: 40.0
+uInitial: 39.0

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 Author: Alexander David Leech
-Date:   05/03/2016
-Rev:    2
+Date:   06/03/2016
+Rev:    3
 Lang:   Python 2.7
 Deps:   None
 Desc:   Contains Enhanced PID controller class for import
@@ -45,15 +45,15 @@ class PIDControllerEnhanced:
              self.__transition(pv,op,error)
              self.startupFlag = False
              
-         if sp - self.prevSP != 0:                          #Testing Methods
-             print "Set Point Change"
-             self.SPC = True
-        
          if self.SPC is True:
              if np.sign(error)!= np.sign(self.prevErr):     #Test for sign change
                  print "Sign Change"
-                 self.spErr = (0.18*sp) + 15.88                 
+                 self.spErr = (self.settings["M1"]*sp) + self.settings["C1"]
                  self.SPC = False                           #Reset variable
+         
+         if sp - self.prevSP != 0:
+             print "Set Point Change"
+             self.SPC = True
          
          self.prevErr = error
          self.prevSP = sp
@@ -75,18 +75,18 @@ class PIDControllerEnhanced:
         # Calculate values for deriv and setErr to ensure seamless bump during
         # controller changover.        
         # PI Control - Calc sp error rounded to 0 d.p
-        if self.settings["ctrlType"] == "PI":
-            self.spErr = np.around(((self.settings["Ki"]/self.dT)*((u/self.settings["Kg"])-error)),0)
+        if self.settings["ctrlType"] == "P":
+            self.spErr = 0
             
-        elif self.settings["ctrlType"] == "PID":
+        elif self.settings["ctrlType"] == "PI" or self.settings["ctrlType"] == "PID":
             self.spErr = np.around(((self.settings["Ki"]/self.dT)*((u/self.settings["Kg"])-error)),0)
             
         else:
-            raise ValueError('Invalid Control Type - Options are PI & PID')
+            raise ValueError('Invalid Control Type - Options are P, PI & PID')
 
 
      def __vlvLims(self,u,error):
-         #Enforce Valve Limitations and antiwindup        
+         #Enforce Valve Limitations and antiwindup
          if u > self.settings["vlvHighLimit"]:
              self.spErr += (self.settings["antiWindUp"] * error)
              print "High Saturation"

@@ -14,3 +14,12 @@ vlvHighLimit: 100
 
 # Advanced
 antiWindUp: 0.0
+
+#Shift Equation Parameters (Y= Mx + C) - Uncomment one set only
+#Test System
+M1: 0.18
+C1: 15.88
+
+#Live System
+#M1: 0.055
+#C1: 209.33

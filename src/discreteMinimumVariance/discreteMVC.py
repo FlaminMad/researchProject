@@ -44,14 +44,15 @@ class discreteMVC:
 
         # Variables
         self.count = 0                  #For 'heart beat' counter
-        self.intDataPoints = 4          #Initial Data Points to be read
-        self.sampleTime = 40            #Controller loop time
+        self.intDataPoints = 10         #Initial Data Points to be read
+        self.sampleTime = 20            #Controller loop time
         
         
     def run(self):
         z = np.array([[0,self.X[0,self.intDataPoints-1]],[0,self.X[1,self.intDataPoints-1]]])     #Array in the form Yt, Ut      
         time.sleep(self.sampleTime - (time.time()-self.timer))
         startTime = time.time()                             #For time reference
+        print "Running Main Method..."
        
         while(True):
             loopTime = time.time()                          #Itteration start time
@@ -62,6 +63,7 @@ class discreteMVC:
             self.xls.writeXls(startTime,r,self.rls.sysID)   #Pass data to excel for logging purposes
             self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3),self.rls.sysID[0],self.rls.sysID[1])
             u = self.MVC.run(z[0,1],r.getRegister(2),(self.rls.sysID))
+            
             print "--------------------------------"            
             print("Time:" + str((time.time() - startTime)))            
             print("z[:,0]: " + str(z[:,0]))
@@ -70,9 +72,7 @@ class discreteMVC:
             print("SysID " + str(self.rls.sysID))
             print("U " + str(u))
             print "--------------------------------"
-            
-            
-            
+
             if int(sys.argv[1]) == 1:
                 self.r.writeModel(u)            #Write to model
             else:
@@ -116,7 +116,6 @@ def main():
     dmvc = discreteMVC()
     print "Please wait, Reading Initial Parameters..."
     dmvc.initialSetup()
-    print "Running Main Method..."
     dmvc.run()
     dmvc.pg.end()
 
