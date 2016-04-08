@@ -47,8 +47,7 @@ suite to verfify the installation
 The python distribution anaconda is the recommeded base for this project and
 can be installed in the following way:
 
-1. Download and install Anaconda with python 2.7 from [here](https://www.continuum.io/downloads)
-⋅⋅⋅following the instructions givien by the vendor
+1. Download and install Anaconda with python 2.7 from [here](https://www.continuum.io/downloads) following the instructions givien by the vendor
 2. Open the installed anaconda terminal and run:
 ```
 conda install pip, numpy, pyyaml, matplotlib, pyserial
@@ -62,3 +61,12 @@ pip install -i http://pypi.anaconda.org/pypi/simple pymodbus
 cd /location/of/researchProject
 python2 ./tests/TESTINSTALL.py
 ```
+
+## Running:
+Scripts are provided to run each program within the .../scripts/<OS_TYPE>/ directory.
+Both simulation mode and live system running versions are avaliable so the user 
+does not require to be connected to a live system.
+
+##Documentation
+Individual detailed documentation is not yet avaliable however an insight to each 
+controller is avaliable within the main research project report.

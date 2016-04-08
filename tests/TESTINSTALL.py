@@ -2,7 +2,7 @@
 """
 Created on Fri Apr 08 17:14:55 2016
 
-@author: Alex
+@author: Alex Leech
 """
 errors = 0
 
