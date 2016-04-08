@@ -48,7 +48,10 @@ class PIDControllerEnhanced:
          if self.SPC is True:
              if np.sign(error)!= np.sign(self.prevErr):     #Test for sign change
                  print "Sign Change"
-                 self.spErr = (self.settings["M1"]*sp) + self.settings["C1"]
+                 if self.settings["tuningMode"] == "N":            
+                     self.spErr = (self.settings["M1"]*sp) + self.settings["C1"]
+                 else:
+                     print "Tuning Mode Active - Mutiplier Ignored"
                  self.SPC = False                           #Reset variable
          
          if sp - self.prevSP != 0:

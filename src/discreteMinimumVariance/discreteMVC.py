@@ -63,15 +63,6 @@ class discreteMVC:
             self.xls.writeXls(startTime,r,self.rls.sysID)   #Pass data to excel for logging purposes
             self.pg.dataUpdate((time.time() - startTime),r.getRegister(0),r.getRegister(2),r.getRegister(3),self.rls.sysID[0],self.rls.sysID[1])
             u = self.MVC.run(z[0,1],r.getRegister(2),(self.rls.sysID))
-            
-            print "--------------------------------"            
-            print("Time:" + str((time.time() - startTime)))            
-            print("z[:,0]: " + str(z[:,0]))
-            print("z[:,1]: " + str(z[:,1]))
-            print("SP " + str(r.getRegister(2)))
-            print("SysID " + str(self.rls.sysID))
-            print("U " + str(u))
-            print "--------------------------------"
 
             if int(sys.argv[1]) == 1:
                 self.r.writeModel(u)            #Write to model
