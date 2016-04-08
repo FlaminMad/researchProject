@@ -19,9 +19,9 @@ chmod +x installDistArch.sh
 ```
 sudo ./installDistArch.sh
 ```
-This script collects all dependancies required to run the programs within and
-installs them automatically. The installation then runs a test suite to verfify
-the installation
+This script collects all dependencies required to run the programs within this 
+repository and installs them automatically. The installation then runs a test 
+suite to verfify the installation
 
 #### Ubuntu:
 An installation script is provided for users of apt-get and can be used by
@@ -32,24 +32,25 @@ chmod +x installDistUbuntu.sh
 ```
 sudo ./installDistUbuntu.sh
 ```
-This script collects all dependancies required to run the programs within and
-installs them automatically. The installation then runs a test suite to verfify
-the installation
+This script collects all dependencies required to run the programs within this 
+repository and installs them automatically. The installation then runs a test 
+suite to verfify the installation
 
 ### Windows:
 The python distribution anaconda is the recommeded base for this project and
 can be installed in the following way:
+
 1. Download and install Anaconda with python 2.7 from [here](https://www.continuum.io/downloads)
-   following the instructions givien by the vendor
+⋅⋅⋅following the instructions givien by the vendo
 2. Open the installed anaconda terminal and run:
 ```
 conda install pip, numpy, pyyaml, matplotlib, pyserial
 ```
-Followed by:
+3. Followed by:
 ```
 pip install -i http://pypi.anaconda.org/pypi/simple pymodbus
 ```
-3. Verify all packages are installed correctly by running:
+4. Verify all packages are installed correctly by running:
 ```
 cd /location/of/researchProject
 python2 ./tests/TESTINSTALL.py
