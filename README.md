@@ -6,7 +6,7 @@ Level Control Research Project Repo
 * Modbus Data Logging Tool
 * PID Controller
 * Enhanced PID Controller
-* System Parameter Identification Tools Including: 
+* System Parameter Identification Tools Including:  
  Batch Least Squares  
  Recursive Least Squares  
  Pseudo Random Binary Sequence
