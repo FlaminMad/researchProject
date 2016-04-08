@@ -1,12 +1,19 @@
 # Masters Research Project
 Level Control Research Project Repo
 
+
 ## Contents:
 * Modbus Data Logging Tool
 * PID Controller
+* Enhanced PID Controller
+* System Parameter Identification Tools
+⋅⋅*Batch Least Squares
+⋅⋅*Recursive Least Squares
+⋅⋅*Pseudo Random Binary Sequence
 * Minimum Variance Controller
-* System Parameter Identification Tool (RLS)
 * Logged Lab Data
+* Testing Platform
+
 
 ## Installation:
 ### Linux:
@@ -41,7 +48,7 @@ The python distribution anaconda is the recommeded base for this project and
 can be installed in the following way:
 
 1. Download and install Anaconda with python 2.7 from [here](https://www.continuum.io/downloads)
-⋅⋅⋅following the instructions givien by the vendo
+⋅⋅⋅following the instructions givien by the vendor
 2. Open the installed anaconda terminal and run:
 ```
 conda install pip, numpy, pyyaml, matplotlib, pyserial
