@@ -63,7 +63,7 @@ python2 ./tests/TESTINSTALL.py
 ```
 
 ## Running:
-Scripts are provided to run each program within the .../scripts/<OS_TYPE>/ directory.
+Scripts are provided to run each program within the .../scripts/OS_TYPE/ directory.
 Both simulation mode and live system running versions are avaliable so the user 
 does not require to be connected to a live system.
 
