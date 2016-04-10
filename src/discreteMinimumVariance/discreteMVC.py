@@ -45,7 +45,7 @@ class discreteMVC:
         # Variables
         self.count = 0                  #For 'heart beat' counter
         self.intDataPoints = 10         #Initial Data Points to be read
-        self.sampleTime = 20            #Controller loop time
+        self.sampleTime = 30            #Controller loop time
         
         
     def run(self):
