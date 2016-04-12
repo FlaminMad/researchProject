@@ -5,10 +5,10 @@ Required:
 pyserial
 pymodbus
 numpy
-
-Recommended:
+matplotlib
 openpyxl
+yaml
 
-Specific Packages Only:
+Recommeneded:
 scipy
 pybrain

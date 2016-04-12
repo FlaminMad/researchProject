@@ -4,9 +4,9 @@ Level Control Research Project Repo
 Current Features:
 * Data logging of modbus systems over RS-232/485
 * PI/PID controller with anti-windup
+* Enhanced PI/PID controller with anti-windup
 * System parameter identification utilsing recursive least squares (RLS)
 * Minimum Varience controller with online learning (RLS algorithm)
-
 
 Planned Future Implementation:
 * Nerual Network Controllers
