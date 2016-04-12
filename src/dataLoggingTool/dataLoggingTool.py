@@ -5,7 +5,7 @@
 @date:   14/10/2015
 @rev:    1
 @lang:   Python 2.7
-@deps:   Pyserial, Pymodbus
+@deps:   Pyserial, Pymodbus, openpyxl, matplotlib, numpy
 @desc:   Main file for data logging
 """
 import sys                                      #System Functions Import 
@@ -14,7 +14,7 @@ from osTools import osTools                     #For detecting exit keypress
 from xlsLogging import xlsLogging               #Import Excel Logging Class
 from plotActiveGraph import plotActiveGraph     #Import Graph Plotting Class
 
-if int(sys.argv[1]) == 1:
+if int(sys.argv[1]) == 1:                       #Test if in 'simulation' mode
     sys.path.insert(0, '../../tests')    
     from testModel import testModel             #Import Simulation Class
 else:

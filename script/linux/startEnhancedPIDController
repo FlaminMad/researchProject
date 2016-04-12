@@ -1,0 +1,24 @@
+#!/bin/bash 
+# Author: Alexander David Leech
+# Date:   12/04/2016
+# Desc:   Script to start the PID Controller program
+
+clear
+cd ../../src/EnhancedPIDControl
+echo 'Simulation Mode? (Y/N)'
+read SIM
+
+if [ "$SIM" == "Y" ]
+then
+    python2 PIDControlEnhanced.py 1
+    exit 1
+fi
+
+if [ "$SIM" == "N" ]
+then
+    python2 PIDControlEnhanced.py 0
+    exit 1
+fi
+
+echo Invalid Input
+exit 1

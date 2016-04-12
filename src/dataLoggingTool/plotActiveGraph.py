@@ -7,7 +7,7 @@ Author: Alexander David Leech
 Date:   07/01/2016
 Rev:    1
 Lang:   Python 2.7
-Deps:   numpy, matplotlib, warnings
+Deps:   numpy, matplotlib, warnings, yaml
 """
 
 import numpy as np

@@ -5,7 +5,7 @@ Author: Alexander David Leech
 Date:   14/10/2015
 Rev:    1
 Lang:   Python 2.7
-Deps:   Pyserial, Pymodbus
+Deps:   Pyserial, Pymodbus, yaml
 Desc:   Class for communications to the honeywell controller using
         the modbus protocol library (pymodbus).
 """
@@ -39,7 +39,7 @@ class comClient:
             print('Failed to set config from file. Falling back to default values:')
             self.comSettings = { 
                     "method"   : 'rtu',
-                    "port"     : 'COM3',    #COM2 for virtual serial port tests & COM3/4 for online running
+                    "port"     : 'COM3',                            #FALL BACK VALUES ONLY
                     "stopbits" : 1,                
                     "bytesize" : 8,                
                     "parity"   : 'N',
@@ -51,17 +51,17 @@ class comClient:
     def dataHandler(self, operation, *data):
         if operation == 'r':
             for i in range(3):
-                r = self.__readData()
-                if r != IOError:
+                r = self.__readData()                               #Attempt to read MODBUS data
+                if r != IOError:                                    #If success, carry on
                     break
-                elif i == 2:
+                elif i == 2:                                        #Retry 3 times on failure
                     raise SystemExit('Modbus Error: Failed 3 Attemps')
                 time.sleep(5)
             return r
         
         elif operation == 'w':
             try:            
-                self.__writeData(data[0])
+                self.__writeData(data[0])                           #Attempt to write MODBUS data
             except IndexError:
                 raise SystemExit('No data passed to write!')
             return
@@ -71,6 +71,7 @@ class comClient:
 
         
     def __readData(self):
+        #Function to write data to controller
         try:        
             self.client.connect()
             #REMEMBER: Controller is unit 0x01

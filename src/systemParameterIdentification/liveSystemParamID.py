@@ -41,7 +41,7 @@ class liveSystemParamID:
         # Variables
         self.count = 0                  #For 'heart beat' counter
         self.intDataPoints = 4          #Initial Data Points to be read
-        self.sampleTime = 10            #Calculation loop time
+        self.sampleTime = 40            #Calculation loop time
 
     def run(self):
         z = np.array([[0,self.X[0,self.intDataPoints-1]],[0,self.X[1,self.intDataPoints-1]]])     #Array in the form Yt, Ut      

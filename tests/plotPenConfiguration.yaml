@@ -5,8 +5,8 @@
 # the matplotlib documentation.
 
 no_of_plots: 1
-y_axis_min: 30
-y_axis_max: 50
+y_axis_min: 0
+y_axis_max: 100
 pen_1_name: PV
 pen_1_colour: go-
 pen_2_name: SP
